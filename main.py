@@ -10,13 +10,13 @@ params = {
   "commodity_id2": "",
   "goday": "",
   "dateaddcnt": 0,
-  "DATA_DATE_Y": 2014,
+  "DATA_DATE_Y": 2012,
   "DATA_DATE_M": "02",
   "DATA_DATE_D": "25",
-  "syear": 2014,
+  "syear": 2012,
   "smonth": "02",
   "sday": "25",
-  "datestart": "2014/02/25",
+  "datestart": "2012/02/25",
   "commodity_idt": "MTX",
   "commodity_id2t": "",
   "commodity_id2t2": "",
@@ -99,7 +99,7 @@ for y in range(1,13):
 
 # od = collections.OrderedDict(sorted(data.items(), key=lambda t: t[0]))
 jsonarray = json.dumps(data, sort_keys=True)
-with open('data2.json', 'w') as outfile:
+with open('data12.json', 'w') as outfile:
     json.dump(data, outfile)
 
 
