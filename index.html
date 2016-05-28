@@ -7,6 +7,23 @@
   .red{
     color: red;
   }
+  .sty1{
+    border: solid 1px #d0576b;
+    *zoom: 1;
+    margin-bottom: 50px;
+  }
+  .sty1:before, .sty1:after {
+    content: " ";
+    display: table;
+  }
+  .sty1:after {
+    clear: both;
+  }
+
+  .per_month{
+    width: 30%;
+    float: left;
+  }
 </style>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -35,8 +52,12 @@
 <div id="container12"></div>
 <!-- <h1>結算日平均價差-2012：</h1>
 <h2 class="all_settle_spread12"></h2> -->
+<hr>
 
-
+<div id="months_year15" class="sty1"></div>
+<div id="months_year14" class="sty1"></div>
+<div id="months_year13" class="sty1"></div>
+<div id="months_year12" class="sty1"></div>
 </body>
 </html>
 
