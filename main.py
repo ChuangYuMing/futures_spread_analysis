@@ -1,3 +1,5 @@
+# 小台指近期＆次近期＆價差
+
 import requests
 from bs4 import BeautifulSoup
 import json
@@ -35,6 +37,7 @@ def find_tr_index(table):
     month = table.select("tr")[tr_index].select("td")[td_month].text
   return tr_index
 
+# 是否為結算日
 def is_settle(date):
   date_arr = date.split('/')
   year = int(date_arr[0])
