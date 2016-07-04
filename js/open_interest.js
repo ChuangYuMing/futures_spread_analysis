@@ -1,8 +1,8 @@
 $(function () {
   var data_year = ["11", "12", "13", "14", "15", "16"];
   weighted_index(data_year);
-  // tx_open_interest(data_year);
-  // three_opi_bull(data_year);
+  tx_open_interest(data_year);
+  three_opi_bull(data_year);
   three_opi_bear(data_year);
   other_opi_bull(data_year);
   other_opi_bear(data_year);
