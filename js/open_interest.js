@@ -1,5 +1,5 @@
 $(function () {
-  var data_year = ["11", "12", "13", "14", "15", "16"];
+  var data_year = ["14", "15", "16"];
   weighted_index(data_year);
   // tx_open_interest(data_year);
   three_opi_bull(data_year);
@@ -44,7 +44,7 @@ function create_common_hightstock(type, subject, y_name, year, datas) {
         }
       },
      rangeSelector : {
-          selected : 1
+          selected : 5
       },
       tooltip: {
           valueSuffix: '',
@@ -89,7 +89,7 @@ function create_other_opi_hightstock(params) {
         x: -20
     },
     rangeSelector: {
-        selected: 1
+        selected: 5
     },
     yAxis: {
         title: {
@@ -152,7 +152,7 @@ function create_opi_hightstock(params) {
         x: -20
     },
     rangeSelector: {
-        selected: 1
+        selected: 5
     },
     yAxis: {
         title: {
