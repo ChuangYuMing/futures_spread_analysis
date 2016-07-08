@@ -38,10 +38,28 @@ def check_date(date):
       return "ValueError"
   return True
 
+
+# 是否為結算日
+def is_settle(date):
+  date_arr = date.split('/')
+  year = int(date_arr[0])
+  month = int(date_arr[1]) if date_arr[1][0:1] != "0" else int(date_arr[1][-1])
+  day = int(date_arr[2])
+  n_date = datetime.date(year, month, day)
+  weekday = n_date.strftime("%w")
+
+  if weekday == "3":
+    bb_date = n_date + datetime.timedelta(days = -21)
+    b_date = n_date + datetime.timedelta(days = -14)
+    a_date = n_date + datetime.timedelta(days = 7)
+    if b_date.month == month and a_date.month == month and bb_date.month != month:
+      return True
+  return False
+
 data = collections.OrderedDict()
 
-for z in range(2016,2017):
-  for y in range(1,8):
+for z in range(2011,2016):
+  for y in range(1,13):
     for x in range(1,32):
       syear = str(z)
       smonth = str(y) if len(str(y)) != 1 else "0" + str(y)
@@ -67,6 +85,7 @@ for z in range(2016,2017):
           datestart = params["datestart"]
           data[datestart] = {}
           data[datestart]["open_interest"] = open_interest
+          data[datestart]["is_settle"] = is_settle(datestart)
           print(datestart)
 
         else:

@@ -20,11 +20,15 @@ function weighted_index(data_year){
         obj.y = parseInt(val.w_index)
         obj.x = Date.parse(key)
         obj.date = key
+        obj.is_settle = val.is_settle
         obj.w_index = val.w_index
         datas.push(obj);
       });
 
       create_common_hightstock("w-index", "加權指數", "價位", s_year, datas)
+      create_common_hightstock("w-index2", "加權指數", "價位", s_year, datas)
+      create_common_hightstock("w-index3", "加權指數", "價位", s_year, datas)
+      create_common_hightstock("w-index4", "加權指數", "價位", s_year, datas)
 
     }) //end get data
   }) //end each year
@@ -84,48 +88,56 @@ function option_opi(data_year){
         fbc.y = parseInt(val.f_buy_call)
         fbc.x = Date.parse(key)
         fbc.date = key
+        fbc.is_settle = val.is_settle
         fbc_datas.push(fbc);
 
         fbca = {}
         fbca.y = parseInt(val.f_buy_call_amount)
         fbca.x = Date.parse(key)
         fbca.date = key
+        fbca.is_settle = val.is_settle
         fbca_datas.push(fbca);
 
         fbp = {}
         fbp.y = parseInt(val.f_buy_put)
         fbp.x = Date.parse(key)
         fbp.date = key
+        fbp.is_settle = val.is_settle
         fbp_datas.push(fbp);
 
         fbpa = {}
         fbpa.y = parseInt(val.f_buy_put_amount)
         fbpa.x = Date.parse(key)
         fbpa.date = key
+        fbpa.is_settle = val.is_settle
         fbpa_datas.push(fbpa);
 
         fsc = {}
         fsc.y = parseInt(val.f_sell_call)
         fsc.x = Date.parse(key)
         fsc.date = key
+        fsc.is_settle = val.is_settle
         fsc_datas.push(fsc);
 
         fsca = {}
         fsca.y = parseInt(val.f_sell_call_amount)
         fsca.x = Date.parse(key)
         fsca.date = key
+        fsca.is_settle = val.is_settle
         fsca_datas.push(fsca);
 
         fsp = {}
         fsp.y = parseInt(val.f_sell_put)
         fsp.x = Date.parse(key)
         fsp.date = key
+        fsp.is_settle = val.is_settle
         fsp_datas.push(fsp);
 
         fspa = {}
         fspa.y = parseInt(val.f_sell_put_amount)
         fspa.x = Date.parse(key)
         fspa.date = key
+        fspa.is_settle = val.is_settle
         fspa_datas.push(fspa);
       });
 
@@ -178,6 +190,9 @@ function create_common_hightstock(type, subject, y_name, year, datas) {
             html = '<span>日期：<span>' + this.points[0].point.date + '<br>' +
               '<span>' +y_name+ ': <span>' + this.points[0].point.y + '<br>' ;
 
+            if (this.points[0].point.is_settle == true) {
+              html = html + '<span style="color: red">結算日<span>';
+            }
             return html;
           }
       },

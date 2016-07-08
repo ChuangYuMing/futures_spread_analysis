@@ -1,7 +1,7 @@
 $(function () {
   var data_year = ["14", "15", "16"];
   weighted_index(data_year);
-  // tx_open_interest(data_year);
+  tx_open_interest(data_year);
   three_opi_bull(data_year);
   three_opi_bear(data_year);
   other_opi_bull(data_year);
@@ -52,8 +52,11 @@ function create_common_hightstock(type, subject, y_name, year, datas) {
           formatter: function() {
             console.log(this);
             html = '<span>日期：<span>' + this.points[0].point.date + '<br>' +
-              '<span>' +y_name+ ': <span>' + this.points[0].point.w_index + '<br>' ;
+              '<span>' +y_name+ ': <span>' + this.points[0].point.y + '<br>' ;
 
+            if (this.points[0].point.is_settle == true) {
+              html = html + '<span style="color: red">結算日<span>';
+            }
             return html;
           }
       },
@@ -118,6 +121,9 @@ function create_other_opi_hightstock(params) {
             '<span style="color:' + this.points[0].color+ '">' +this.points[0].point.series.name+ '</span>: <b>' +this.points[0].y+ '</b><br>'+
             '<span style="color:' + this.points[1].color+ '">' +this.points[1].point.series.name+ '</span>: <b>' +this.points[1].y+ '</b>' ;
 
+            if (this.points[0].point.is_settle == true) {
+              html = html + '<span style="color: red">結算日<span>';
+            }
           return html;
         }
     },
@@ -183,6 +189,9 @@ function create_opi_hightstock(params) {
             '<span style="color:' + this.points[2].color+ '">' +this.points[2].point.series.name+ '</span>: <b>' +this.points[2].y+ '</b><br>'+
             '<span style="color:' + this.points[3].color+ '">' +this.points[3].point.series.name+ '</span>: <b>' +this.points[3].y+ '</b>'
 
+            if (this.points[0].point.is_settle == true) {
+              html = html + '<span style="color: red">結算日<span>';
+            }
           return html;
         }
     },
@@ -225,6 +234,7 @@ function other_opi_bear(data_year){
         $.each( data, function( key, val ) {
           // res_obj[key] = {}
           res_obj[key].tx_open_interest = val.open_interest
+          res_obj[key].is_settle = val.is_settle
         });
 
 
@@ -237,11 +247,13 @@ function other_opi_bear(data_year){
           other_all.y = parseInt(val.tx_open_interest) - parseInt(val.total)
           other_all.x = Date.parse(key)
           other_all.date = key
+          other_all.is_settle = val.is_settle
           other_all_datas.push(other_all);
 
           other_f.y = parseInt(val.tx_open_interest) - parseInt(val.foreign)
           other_f.x = Date.parse(key)
           other_f.date = key
+          other_f.is_settle = val.is_settle
           other_f_datas.push(other_f);
         });
 
@@ -279,6 +291,7 @@ function other_opi_bull(data_year){
         $.each( data, function( key, val ) {
           // res_obj[key] = {}
           res_obj[key].tx_open_interest = val.open_interest
+          res_obj[key].is_settle = val.is_settle
         });
 
 
@@ -291,11 +304,13 @@ function other_opi_bull(data_year){
           other_all.y = parseInt(val.tx_open_interest) - parseInt(val.total)
           other_all.x = Date.parse(key)
           other_all.date = key
+          other_all.is_settle = val.is_settle
           other_all_datas.push(other_all);
 
           other_f.y = parseInt(val.tx_open_interest) - parseInt(val.foreign)
           other_f.x = Date.parse(key)
           other_f.date = key
+          other_f.is_settle = val.is_settle
           other_f_datas.push(other_f);
         });
 
@@ -327,21 +342,25 @@ function three_opi_bear(data_year){
         self_obj = {}
         self_obj.y = parseInt(val.bear_self)
         self_obj.x = Date.parse(key)
+        self_obj.is_settle = val.is_settle
         self_obj.date = key
 
         trust_obj = {}
         trust_obj.y = parseInt(val.bear_trust)
         trust_obj.x = Date.parse(key)
+        trust_obj.is_settle = val.is_settle
         trust_obj.date = key
 
         foreign_obj = {}
         foreign_obj.y = parseInt(val.bear_foreign)
         foreign_obj.x = Date.parse(key)
+        foreign_obj.is_settle = val.is_settle
         foreign_obj.date = key
 
         total_obj = {}
         total_obj.y = parseInt(val.bear_total)
         total_obj.x = Date.parse(key)
+        total_obj.is_settle = val.is_settle
         total_obj.date = key
 
         self_datas.push(self_obj);
@@ -391,21 +410,25 @@ function three_opi_bull(data_year){
         self_obj = {}
         self_obj.y = parseInt(val.bull_self)
         self_obj.x = Date.parse(key)
+        self_obj.is_settle = val.is_settle
         self_obj.date = key
 
         trust_obj = {}
         trust_obj.y = parseInt(val.bull_trust)
         trust_obj.x = Date.parse(key)
+        trust_obj.is_settle = val.is_settle
         trust_obj.date = key
 
         foreign_obj = {}
         foreign_obj.y = parseInt(val.bull_foreign)
         foreign_obj.x = Date.parse(key)
+        foreign_obj.is_settle = val.is_settle
         foreign_obj.date = key
 
         total_obj = {}
         total_obj.y = parseInt(val.bull_total)
         total_obj.x = Date.parse(key)
+        total_obj.is_settle = val.is_settle
         total_obj.date = key
 
         self_datas.push(self_obj);
@@ -452,6 +475,7 @@ function tx_open_interest(data_year){
         obj.x = Date.parse(key)
         obj.date = key
         obj.open_interest = val.open_interest
+        obj.is_settle = val.is_settle
         datas.push(obj);
       });
 
@@ -471,6 +495,7 @@ function weighted_index(data_year){
         obj.x = Date.parse(key)
         obj.date = key
         obj.w_index = val.w_index
+        obj.is_settle = val.is_settle
         datas.push(obj);
       });
 
