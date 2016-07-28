@@ -59,8 +59,8 @@ def format_number(num):
 
 data = collections.OrderedDict()
 
-for z in range(2014,2016):
-  for y in range(1,13):
+for z in range(2016,2017):
+  for y in range(1,8):
     for x in range(1,32):
       syear = str(z)
       smonth = str(y) if len(str(y)) != 1 else "0" + str(y)
