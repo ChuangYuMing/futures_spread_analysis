@@ -1,5 +1,6 @@
+# encoding: utf-8
 # 加權指數
-#TODO: http://jeanphix.me/Ghost.py/
+
 import requests
 from bs4 import BeautifulSoup
 import json
@@ -56,14 +57,14 @@ def is_settle(date):
 data = collections.OrderedDict()
 
 for z in range(105,106):
-  for y in range(1,8):
+  for y in range(1,12):
     for x in range(1,32):
       syear = str(z)
       smonth = str(y) if len(str(y)) != 1 else "0" + str(y)
       sday = str(x) if len(str(x)) != 1 else "0" + str(x)
 
       params["qdate"] = syear + "/" + smonth + "/" + sday
-      crawl_url = "http://www.twse.com.tw/ch/trading/exchange/MI_INDEX/MI_INDEX.php"
+      crawl_url = "http://www.twse.com.tw/zh/page/trading/exchange/MI_INDEX.html"
       res = requests.post(crawl_url, data = params)
       soup = BeautifulSoup(res.text, "lxml")
 
@@ -90,19 +91,3 @@ for z in range(105,106):
       json.dump(data, outfile)
 
   data = collections.OrderedDict()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

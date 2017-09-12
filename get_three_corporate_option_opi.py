@@ -1,3 +1,4 @@
+# encoding: utf-8
 # 三大法人選擇權未平倉量
 # 只能撈前三年！！！
 
@@ -60,7 +61,7 @@ def format_number(num):
 data = collections.OrderedDict()
 
 for z in range(2016,2017):
-  for y in range(1,8):
+  for y in range(1,13):
     for x in range(1,32):
       syear = str(z)
       smonth = str(y) if len(str(y)) != 1 else "0" + str(y)
@@ -115,21 +116,3 @@ for z in range(2016,2017):
       json.dump(data, outfile)
 
   data = collections.OrderedDict()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

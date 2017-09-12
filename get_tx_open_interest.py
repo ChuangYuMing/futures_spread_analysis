@@ -1,3 +1,4 @@
+# encoding: utf-8
 # 台指期未平倉量
 
 import requests
@@ -58,8 +59,8 @@ def is_settle(date):
 
 data = collections.OrderedDict()
 
-for z in range(2011,2016):
-  for y in range(1,13):
+for z in range(2017,2018):
+  for y in range(1,10):
     for x in range(1,32):
       syear = str(z)
       smonth = str(y) if len(str(y)) != 1 else "0" + str(y)
@@ -98,21 +99,3 @@ for z in range(2011,2016):
       json.dump(data, outfile)
 
   data = collections.OrderedDict()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
