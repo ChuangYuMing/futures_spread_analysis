@@ -1,5 +1,5 @@
 $(function () {
-  var data_year = ["14", "15", "16"];
+  var data_year = ["14", "15", "16", "17"];
   option_opi(data_year);
   weighted_index(data_year);
 

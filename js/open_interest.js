@@ -1,5 +1,5 @@
 $(function () {
-  var data_year = ["14", "15", "16"];
+  var data_year = ["14", "15", "16", "17"];
   weighted_index(data_year);
   tx_open_interest(data_year);
   three_opi_bull(data_year);
@@ -504,7 +504,3 @@ function weighted_index(data_year){
     }) //end get data
   }) //end each year
 }
-
-
-
-
