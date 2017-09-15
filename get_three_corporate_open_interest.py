@@ -1,11 +1,12 @@
 # encoding: utf-8
-# 三大法人多空未平倉量
+# 三大法人期貨多空未平倉量
 # 只能撈前三年！！！
 
 import requests
 from bs4 import BeautifulSoup
 import json
 import datetime
+import time
 import collections
 from re import sub
 from decimal import Decimal
@@ -29,11 +30,25 @@ def check_date(date):
   year = int(date_arr[0])
   month = int(date_arr[1]) if date_arr[1][0:1] != "0" else int(date_arr[1][-1])
   day = int(date_arr[2])
+  now_date = datetime.datetime.now()
 
   try:
-    n_date = datetime.date(year, month, day)
+    request_date = datetime.date(year, month, day)
+    nowstamp = time.mktime(now_date.timetuple())
+    requeststamp = time.mktime(request_date.timetuple())
+    diff = requeststamp -  nowstamp
+    if now_date.day == day:
+        if diff < -72000:
+            return True
+        else:
+            return False
+    else:
+        if diff > 0:
+            return False
+        else:
+            return True
   except ValueError:
-      return "ValueError"
+      return False
   return True
 
 # 是否為結算日
@@ -60,7 +75,7 @@ def format_number(num):
 
 data = collections.OrderedDict()
 
-for z in range(2016,2018):
+for z in range(2017,2018):
   for y in range(1,13):
     for x in range(1,32):
       syear = str(z)
@@ -75,7 +90,7 @@ for z in range(2016,2018):
 
       params["datestart"] = syear + "/" + smonth + "/" + sday
       settle = check_date(params["datestart"])
-      if settle != "ValueError":
+      if settle :
         res = requests.post("http://www.taifex.com.tw/chinese/3/7_12_3.asp", data = params)
         soup = BeautifulSoup(res.text, "lxml")
 
@@ -89,6 +104,10 @@ for z in range(2016,2018):
           bear_trust = table.select("tr")[4].select("td")[9].text.strip()
           bear_foreign = table.select("tr")[5].select("td")[9].text.strip()
 
+          diff_self = table.select("tr")[3].select("td")[13].text.strip()
+          diff_trust = table.select("tr")[4].select("td")[11].text.strip()
+          diff_foreign = table.select("tr")[5].select("td")[11].text.strip()
+
           datestart = params["datestart"]
           data[datestart] = {}
           data[datestart]["bull_self"] = format_number(bull_self)
@@ -97,8 +116,14 @@ for z in range(2016,2018):
           data[datestart]["bear_self"] = format_number(bear_self)
           data[datestart]["bear_trust"] = format_number(bear_trust)
           data[datestart]["bear_foreign"] = format_number(bear_foreign)
+
+          data[datestart]["diff_self"] = format_number(diff_self)
+          data[datestart]["diff_trust"] = format_number(diff_trust)
+          data[datestart]["diff_foreign"] = format_number(diff_foreign)
+
           data[datestart]["bull_total"] = str(int(data[datestart]["bull_self"]) + int(data[datestart]["bull_trust"]) + int(data[datestart]["bull_foreign"]))
           data[datestart]["bear_total"] = str(int(data[datestart]["bear_self"]) + int(data[datestart]["bear_trust"]) + int(data[datestart]["bear_foreign"]))
+          data[datestart]["diff_total"] = str(int(data[datestart]["diff_self"]) + int(data[datestart]["diff_trust"]) + int(data[datestart]["diff_foreign"]))
           data[datestart]["is_settle"] = is_settle(datestart)
 
           print(datestart)

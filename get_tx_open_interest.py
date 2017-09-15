@@ -59,9 +59,9 @@ def is_settle(date):
 
 data = collections.OrderedDict()
 
-for z in range(2017,2018):
-  for y in range(1,10):
-    for x in range(1,32):
+for z in range(2015,2016):
+  for y in range(9,10):
+    for x in range(1,10):
       syear = str(z)
       smonth = str(y) if len(str(y)) != 1 else "0" + str(y)
       sday = str(x) if len(str(x)) != 1 else "0" + str(x)
@@ -81,7 +81,7 @@ for z in range(2017,2018):
         if soup.select("table")[2].find_all("table"):
           table = soup.select("table")[2].select("table")[1]
           tr = table.select("tr")
-          open_interest = table.select("tr")[len(tr) - 1].select("td")[10].text.strip()
+          open_interest = table.select("tr")[len(tr) - 1].select("td")[12].text.strip()
 
           datestart = params["datestart"]
           data[datestart] = {}

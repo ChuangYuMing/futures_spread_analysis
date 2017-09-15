@@ -6,6 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import datetime
+import time
 import collections
 from re import sub
 from decimal import Decimal
@@ -22,18 +23,31 @@ params = {
   "COMMODITY_ID": "TXO"
 }
 
-
 # 日期是否有意義
 def check_date(date):
   date_arr = date.split('/')
   year = int(date_arr[0])
   month = int(date_arr[1]) if date_arr[1][0:1] != "0" else int(date_arr[1][-1])
   day = int(date_arr[2])
+  now_date = datetime.datetime.now()
 
   try:
-    n_date = datetime.date(year, month, day)
+    request_date = datetime.date(year, month, day)
+    nowstamp = time.mktime(now_date.timetuple())
+    requeststamp = time.mktime(request_date.timetuple())
+    diff = requeststamp -  nowstamp
+    if now_date.day == day:
+        if diff < -72000:
+            return True
+        else:
+            return False
+    else:
+        if diff > 0:
+            return False
+        else:
+            return True
   except ValueError:
-      return "ValueError"
+      return False
   return True
 
 # 是否為結算日
@@ -60,8 +74,8 @@ def format_number(num):
 
 data = collections.OrderedDict()
 
-for z in range(2016,2017):
-  for y in range(1,13):
+for z in range(2017,2018):
+  for y in range(9,13):
     for x in range(1,32):
       syear = str(z)
       smonth = str(y) if len(str(y)) != 1 else "0" + str(y)
@@ -75,7 +89,7 @@ for z in range(2016,2017):
 
       params["datestart"] = syear + "/" + smonth + "/" + sday
       settle = check_date(params["datestart"])
-      if settle != "ValueError":
+      if settle :
         res = requests.post("http://www.taifex.com.tw/chinese/3/7_12_5.asp", data = params)
         soup = BeautifulSoup(res.text, "lxml")
 
