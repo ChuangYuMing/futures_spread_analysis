@@ -41,15 +41,24 @@ def format_number(num):
 
 # 日期是否有意義
 def check_date(year, month ,day):
-  # date_arr = date.split('/')
-  # year = int(date_arr[0])
-  # month = int(date_arr[1]) if date_arr[1][0:1] != "0" else int(date_arr[1][-1])
-  # day = int(date_arr[2])
-
+  now_date = datetime.datetime.now()
   try:
-    n_date = datetime.date(year, month, day)
+    request_date = datetime.date(year, month, day)
+    nowstamp = time.mktime(now_date.timetuple())
+    requeststamp = time.mktime(request_date.timetuple())
+    diff = requeststamp -  nowstamp
+    if now_date.day == day:
+        if diff < -72000:
+            return True
+        else:
+            return False
+    else:
+        if diff > 0:
+            return False
+        else:
+            return True
   except ValueError:
-      return "ValueError"
+      return False
   return True
 
 
@@ -72,44 +81,36 @@ def is_settle(date):
 
 def request_data(url, params):
     global count
+    print(params.date)
     res = requests.get(crawl_url, params = params)
-    aa = '123'
-    print(res.url)
-    print(res.text)
+    aa = ''
     count = count + 1
     if count > 10:
         time.sleep( 2 )
         count = 0
     try:
       aa = json.loads(res.text)
-      print(aa)
-      print(isinstance(aa, dict))
       if isinstance(aa, dict) == True:
-          print("@@@@@")
           return aa
     except:
         time.sleep( 2 )
         aa = request_data(url, params)
         if isinstance(aa, dict) == True:
-            print("@@@@@22")
             return aa
 
 data = collections.OrderedDict()
 
-for z in range(2016,2018):
-  for y in range(1,13):
-    for x in range(1,32):
+for z in range(2017,2018):
+  for y in range(9,10):
+    for x in range(1,17):
       syear = str(z)
       smonth = str(y) if len(str(y)) != 1 else "0" + str(y)
       sday = str(x) if len(str(x)) != 1 else "0" + str(x)
       if check_date(z, y, x) != True:
-          print(z,y,x)
-          print("無效日期")
           continue
       params["date"] = syear  + smonth  + sday
       crawl_url = "http://www.twse.com.tw/exchangeReport/MI_INDEX"
       aa = request_data(crawl_url, params)
-      print(aa)
 
       if (aa['stat']) == 'OK':
         first_row = aa['data1'][1]
