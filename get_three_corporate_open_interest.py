@@ -75,8 +75,8 @@ def format_number(num):
     value = value*-1 if "-" in num else value
     return str(value)
 
-data = collections.OrderedDict()
 
+data = collections.OrderedDict()
 for z in range(2017, 2018):
     for y in range(1, 13):
         for x in range(1, 32):

@@ -101,8 +101,8 @@ def request_data(url, params):
         if isinstance(aa, dict) is True:
             return aa
 
-data = collections.OrderedDict()
 
+data = collections.OrderedDict()
 for z in range(2017, 2018):
     for y in range(9, 10):
         for x in range(1, 17):
