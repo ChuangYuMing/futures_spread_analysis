@@ -12,7 +12,7 @@ import sys
 import traceback
 from package.tools import check_date, is_settle, format_number
 
-print('START ##############')
+print('START ############## OptionOpiCrawler')
 
 
 class OptionOpiCrawler:
@@ -57,15 +57,13 @@ class OptionOpiCrawler:
             st_month = 1
             end_month = 12
             last_item = {}
-            try:
-                old_file = open(self.root + 'data/' + self.const_name + '/' + str(z) + '.json', 'r')
+            url = self.root + 'data/' + self.const_name + '/' + str(z) + '.json'
+            if os.path.exists(url) is True:
+                last_item = {}
+                old_file = open(url, 'r')
                 i = collections.OrderedDict(json.load(old_file))
                 last_item = i[list(i.keys())[-1]]
-                # print(last_item)
-            except:
-                ex_type, ex, tb = sys.exc_info()
-                # traceback.print_tb(tb)
-                traceback.print_exc()
+            else:
                 last_item = {}
             if z == now_date.year:
                 st_month = int(last_time['month'])

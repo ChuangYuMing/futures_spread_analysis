@@ -55,6 +55,4 @@ def is_settle(date):
 
 
 def format_number(num):
-    value = Decimal(sub(r'[^\d.]', '', num))
-    value = value*-1 if "-" in num else value
-    return str(value)
+    return ''.join(num.split(','))
