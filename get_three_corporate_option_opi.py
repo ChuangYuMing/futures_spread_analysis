@@ -135,10 +135,9 @@ def main():
                 params["datestart"] = syear + "/" + smonth + "/" + sday
                 settle = check_date(params["datestart"])
                 if settle:
-                    print(last_item['f_buy_call'], params["datestart"])
+                    print(params["datestart"])
                     res = requests.post("http://www.taifex.com.tw/chinese/3/7_12_5.asp", data=params)
                     soup = BeautifulSoup(res.text, "lxml")
-
                     if soup.select("table")[2].find_all("table"):
                         table = soup.select("table")[2].select("table")[0]
 
@@ -155,7 +154,6 @@ def main():
                         if len(last_item) > 0:
                             f_buy_call = format_number(f_buy_call)
                             f_sell_put_amount = format_number(f_sell_put_amount)
-                            print(last_item['f_buy_call'], f_buy_call)
                             if last_item['f_buy_call'] == f_buy_call and last_item['f_sell_put_amount'] == f_sell_put_amount:
                                 break
                         datestart = params["datestart"]
