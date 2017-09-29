@@ -1,7 +1,5 @@
 import datetime
 import time
-from re import sub
-from decimal import Decimal
 
 
 def format_date(date):

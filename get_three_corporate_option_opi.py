@@ -8,9 +8,9 @@ import json
 import datetime
 import collections
 import os
-import sys
-import traceback
-from package.tools import check_date, is_settle, format_number
+from package.tools import check_date, is_settle, format_number, format_date
+import time
+
 
 print('START ############## OptionOpiCrawler')
 
@@ -53,18 +53,18 @@ class OptionOpiCrawler:
         ufile = open(self.root + 'data/last_update_date.json', 'r')
         last_time_obj = json.load(ufile)
         last_time = last_time_obj[self.const_name]
+        final_request_date = {}
         for z in range(int(last_time['year']), now_date.year + 1):
             st_month = 1
             end_month = 12
-            last_item = {}
             url = self.root + 'data/' + self.const_name + '/' + str(z) + '.json'
             if os.path.exists(url) is True:
-                last_item = {}
+                final_request_item = {}
                 old_file = open(url, 'r')
                 i = collections.OrderedDict(json.load(old_file))
-                last_item = i[list(i.keys())[-1]]
+                final_request_item = i[list(i.keys())[-1]]
             else:
-                last_item = {}
+                final_request_item = {}
             if z == now_date.year:
                 st_month = int(last_time['month'])
                 end_month = now_date.month
@@ -72,7 +72,7 @@ class OptionOpiCrawler:
                 st_day = 1
                 end_day = 31
                 if z == now_date.year and y == now_date.month:
-                    st_day = int(last_time['day'] + 1)
+                    st_day = int(last_time['day']) + 1
                     end_day = now_date.day
                 for x in range(st_day, end_day + 1):
                     syear = str(z)
@@ -89,9 +89,16 @@ class OptionOpiCrawler:
                     settle = check_date(self.params["datestart"])
                     if settle:
                         print(self.params["datestart"])
-                        res = requests.post(self.url, data=self.params)
-                        soup = BeautifulSoup(res.text, "lxml")
+                        try:
+                            res = requests.post(self.url, data=self.params)
+                        except requests.exceptions.ConnectionError as e:
+                            print('ConnectionError')
+                            # Launchctl do task immediately when mac wake up, but it don't have network
+                            time.sleep(120)
+                            print('re connect')
+                            res = requests.post(self.url, data=self.params)
 
+                        soup = BeautifulSoup(res.text, "lxml")
                         if soup.select("table")[2].find_all("table"):
                             table = soup.select("table")[2].select("table")[0]
 
@@ -105,13 +112,14 @@ class OptionOpiCrawler:
                             f_sell_call_amount = table.select("tr")[5].select("td")[10].text.strip()
                             f_sell_put_amount = table.select("tr")[8].select("td")[10].text.strip()
 
-                            if len(last_item) > 0:
+                            if len(final_request_item) > 0:
                                 f_buy_call = format_number(f_buy_call)
                                 f_sell_put_amount = format_number(f_sell_put_amount)
-                                # print(last_item['f_buy_call'], f_buy_call)
-                                if last_item['f_buy_call'] == f_buy_call and last_item['f_sell_put_amount'] == f_sell_put_amount:
+                                # print(final_request_item['f_buy_call'], f_buy_call)
+                                if final_request_item['f_buy_call'] == f_buy_call and final_request_item['f_sell_put_amount'] == f_sell_put_amount:
                                     break
                             datestart = self.params["datestart"]
+                            final_request_date = format_date(datestart)
                             self.data[datestart] = {}
                             self.data[datestart]["f_buy_call"] = format_number(f_buy_call)
                             self.data[datestart]["f_buy_put"] = format_number(f_buy_put)
@@ -122,17 +130,18 @@ class OptionOpiCrawler:
                             self.data[datestart]["f_sell_call_amount"] = format_number(f_sell_call_amount)
                             self.data[datestart]["f_sell_put_amount"] = format_number(f_sell_put_amount)
                             self.data[datestart]["is_settle"] = is_settle(datestart)
-                            last_item = self.data[datestart]
+                            final_request_item = self.data[datestart]
                         else:
                             print(self.params["datestart"], "no data")
             self.update_data(self.data, str(z))
             self.data = collections.OrderedDict()
 
-        ufile = open(self.root + 'data/last_update_date.json', 'w')
-        last_time_obj[self.const_name]['year'] = now_date.year
-        last_time_obj[self.const_name]['month'] = now_date.month
-        last_time_obj[self.const_name]['day'] = now_date.day
-        json.dump(last_time_obj, ufile, sort_keys=True)
+        if len(final_request_date) > 0:
+            ufile = open(self.root + 'data/last_update_date.json', 'w')
+            last_time_obj[self.const_name]['year'] = final_request_date['year']
+            last_time_obj[self.const_name]['month'] = final_request_date['month']
+            last_time_obj[self.const_name]['day'] = final_request_date['day']
+            json.dump(last_time_obj, ufile, sort_keys=True)
 
 
 Crawler = OptionOpiCrawler()

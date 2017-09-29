@@ -7,10 +7,9 @@ from bs4 import BeautifulSoup
 import json
 import collections
 import os
-import sys
-import traceback
 import datetime
-from package.tools import check_date, is_settle, format_number
+from package.tools import check_date, is_settle, format_number, format_date
+import time
 
 print('START ############## FuturesOpiCrawler')
 
@@ -53,18 +52,18 @@ class FuturesOpiCrawler:
         ufile = open(self.root + 'data/last_update_date.json', 'r')
         last_time_obj = json.load(ufile)
         last_time = last_time_obj[self.const_name]
+        final_request_date = {}
         for z in range(int(last_time['year']), now_date.year + 1):
             st_month = 1
             end_month = 12
-            last_item = {}
             url = self.root + 'data/' + self.const_name + '/' + str(z) + '.json'
             if os.path.exists(url) is True:
-                last_item = {}
+                final_request_item = {}
                 old_file = open(url, 'r')
                 i = collections.OrderedDict(json.load(old_file))
-                last_item = i[list(i.keys())[-1]]
+                final_request_item = i[list(i.keys())[-1]]
             else:
-                last_item = {}
+                final_request_item = {}
             if z == now_date.year:
                 st_month = int(last_time['month'])
                 end_month = now_date.month
@@ -89,9 +88,15 @@ class FuturesOpiCrawler:
                     settle = check_date(self.params["datestart"])
                     if settle:
                         print(self.params["datestart"])
-                        res = requests.post(self.url, data=self.params)
+                        try:
+                            res = requests.post(self.url, data=self.params)
+                        except requests.exceptions.ConnectionError as e:
+                            print('ConnectionError')
+                            # Launchctl do task immediately when mac wake up, but it don't have network
+                            time.sleep(120)
+                            print('re connect')
+                            res = requests.post(self.url, data=self.params)
                         soup = BeautifulSoup(res.text, "lxml")
-
                         if soup.select("table")[2].find_all("table"):
                             table = soup.select("table")[2].select("table")[0]
                             bull_self = table.select("tr")[3].select("td")[9].text.strip()
@@ -106,13 +111,14 @@ class FuturesOpiCrawler:
                             diff_trust = table.select("tr")[4].select("td")[11].text.strip()
                             diff_foreign = table.select("tr")[5].select("td")[11].text.strip()
 
-                            if len(last_item) > 0:
+                            if len(final_request_item) > 0:
                                 bull_self = format_number(bull_self)
                                 bear_foreign = format_number(bear_foreign)
-                                if last_item['bull_self'] == bull_self and last_item['bear_foreign'] == bear_foreign:
+                                if final_request_item['bull_self'] == bull_self and final_request_item['bear_foreign'] == bear_foreign:
                                     break
 
                             datestart = self.params["datestart"]
+                            final_request_date = format_date(datestart)
                             self.data[datestart] = {}
                             self.data[datestart]["bull_self"] = format_number(bull_self)
                             self.data[datestart]["bull_trust"] = format_number(bull_trust)
@@ -129,7 +135,7 @@ class FuturesOpiCrawler:
                             self.data[datestart]["bear_total"] = str(int(self.data[datestart]["bear_self"]) + int(self.data[datestart]["bear_trust"]) + int(self.data[datestart]["bear_foreign"]))
                             self.data[datestart]["diff_total"] = str(int(self.data[datestart]["diff_self"]) + int(self.data[datestart]["diff_trust"]) + int(self.data[datestart]["diff_foreign"]))
                             self.data[datestart]["is_settle"] = is_settle(datestart)
-
+                            final_request_item = self.data[datestart]
                         else:
                             print("no data")
                             print(self.params["datestart"])
@@ -137,11 +143,12 @@ class FuturesOpiCrawler:
             self.update_data(self.data, str(z))
             self.data = collections.OrderedDict()
 
-        ufile = open(self.root + 'data/last_update_date.json', 'w')
-        last_time_obj[self.const_name]['year'] = now_date.year
-        last_time_obj[self.const_name]['month'] = now_date.month
-        last_time_obj[self.const_name]['day'] = now_date.day
-        json.dump(last_time_obj, ufile, sort_keys=True)
+        if len(final_request_date) > 0:
+            ufile = open(self.root + 'data/last_update_date.json', 'w')
+            last_time_obj[self.const_name]['year'] = final_request_date['year']
+            last_time_obj[self.const_name]['month'] = final_request_date['month']
+            last_time_obj[self.const_name]['day'] = final_request_date['day']
+            json.dump(last_time_obj, ufile, sort_keys=True)
 
 
 Crawler = FuturesOpiCrawler()
