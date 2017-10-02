@@ -7,7 +7,7 @@ def format_date(date):
     d = {
         'year': int(date_arr[0]),
         'month': int(date_arr[1]) if date_arr[1][0:1] != "0" else int(date_arr[1][-1]),
-        'day': int(date_arr[2])
+        'day': int(date_arr[2]) if date_arr[2][0:1] != "0" else int(date_arr[2][-1]),
     }
     return d
 
