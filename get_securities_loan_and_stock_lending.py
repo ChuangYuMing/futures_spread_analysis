@@ -1,5 +1,7 @@
 # encoding: utf-8
 # 融券 ＆＆借券賣出
+# http://www.twse.com.tw/zh/page/trading/exchange/TWT93U.html
+
 
 from pymongo import MongoClient
 import csv
@@ -67,9 +69,9 @@ class CreditCrawler:
                                     continue
                             code = re.sub('=|"', '', row[0])
                             date = datetime.datetime(z, y, x)
-                            item = db.credit.find({"code": code}).limit(1)
+                            item = db.credits.find({"code": code}).limit(1)
                             if item.count() == 0:
-                                db.credit.insert_one({
+                                db.credits.insert_one({
                                     "code": code,
                                     "name": row[1],
                                     "credit_data": [{
@@ -89,7 +91,7 @@ class CreditCrawler:
                                     }]
                                 })
                             else:
-                                db.credit.update_one(
+                                db.credits.update_one(
                                 {"code": code, "credit_data.date": {"$ne": date}},
                                 {"$set": {"name": row[1]},
                                  "$push":
@@ -102,9 +104,9 @@ class CreditCrawler:
                                             "se4": format_number(row[5]),
                                             "se5": format_number(row[6]),
                                             "se6": format_number(row[7]),
-                                            "sl1": format_number(row[8]),
-                                            "sl2": format_number(row[9]),
-                                            "sl3": format_number(row[10]),
+                                            "sl1": format_number(row[8]),  # 前日餘額
+                                            "sl2": format_number(row[9]),  # 當日賣出
+                                            "sl3": format_number(row[10]), # 當日還券
                                             "sl4": format_number(row[11]),
                                             "sl5": format_number(row[12]),
                                             "sl6": format_number(row[13])
