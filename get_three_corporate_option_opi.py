@@ -12,7 +12,7 @@ from package.tools import check_date, is_settle, format_number, format_date
 import time
 
 
-print('START ############## OptionOpiCrawler')
+print('START ############## OptionOpiCrawler', datetime.datetime.now())
 
 
 class OptionOpiCrawler:

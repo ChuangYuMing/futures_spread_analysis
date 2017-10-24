@@ -11,7 +11,7 @@ import datetime
 from package.tools import check_date, is_settle, format_number, format_date
 import time
 
-print('START ############## FuturesOpiCrawler')
+print('START ############## FuturesOpiCrawler', datetime.datetime.now())
 
 
 class FuturesOpiCrawler:
