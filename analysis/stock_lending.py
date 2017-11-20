@@ -5,7 +5,7 @@ from pymongo import MongoClient
 
 client = MongoClient('mongodb://localhost:27017/')
 db = client.finance
-datas = db.credit.find()
+datas = db.credits.find()
 # list_datas = []
 
 # for i in datas:
@@ -72,7 +72,7 @@ class analyze:
 
 
 def show_info(code):
-    data = db.credit.find_one({"code": code})
+    data = db.credits.find_one({"code": code})
     credit_data = sorted(data['credit_data'], key=lambda k: k['date'], reverse=True)
     for k in range(0, len(credit_data)):
         sell_stock_lending = int(credit_data[k]['sl2']) #借券當日賣出
@@ -80,7 +80,7 @@ def show_info(code):
         print(credit_data[k]['date'], (sell_stock_return - sell_stock_lending) / 1000)
 
 
-# filter_data = analyze(datas).sell_stock_lending(5).ssl_balence_reduce(2).get()
+# filter_data = analyze(datas).sell_stock_lending(10).ssl_balence_reduce(2).get()
 # merge_data()
-show_info("2823")
+show_info("2344")
 # continue_ssl_balence_reduce(5)
