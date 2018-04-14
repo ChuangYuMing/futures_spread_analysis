@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-
 "beautifulsoup4" = "==4.6.0"
 certifi = "==2017.7.27.1"
 chardet = "==3.0.4"
@@ -27,7 +26,7 @@ semver = "==2.7.8"
 "urllib3" = "==1.22"
 virtualenv = "==15.1.0"
 "virtualenv-clone" = "==0.2.6"
-
+pylint = "*"
 
 [dev-packages]
 
