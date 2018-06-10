@@ -2,6 +2,8 @@
 # 三大法人選擇權未平倉量
 # 只能撈前三年！！！
 
+import psycopg2
+import psycopg2.extras
 import requests
 from bs4 import BeautifulSoup
 import json
@@ -10,7 +12,7 @@ import collections
 import os
 from package.tools import check_date, is_settle, format_number, format_date
 import time
-
+from random import randint
 
 print('START ############## OptionOpiCrawler', datetime.datetime.now())
 
@@ -22,129 +24,155 @@ class OptionOpiCrawler:
         self.root = '/Users/yuming/Documents/futures_spread_analysis/'
         self.const_name = 'three_corporate_option_opi'
         self.params = {
-          "goday": "",
-          "DATA_DATE_Y": 2012,
-          "DATA_DATE_M": "02",
-          "DATA_DATE_D": "25",
-          "syear": 2012,
-          "smonth": "02",
-          "sday": "25",
-          "datestart": "2012/02/25",
-          "COMMODITY_ID": "TXO"
+            "goday": "",
+            "DATA_DATE_Y": 2012,
+            "DATA_DATE_M": "02",
+            "DATA_DATE_D": "25",
+            "syear": 2012,
+            "smonth": "02",
+            "sday": "25",
+            "datestart": "2012-02-25",
+            "COMMODITY_ID": "TXO"
         }
 
-    def update_data(self, data, year):
-        url = self.root + 'data/' + self.const_name + '/' + year + '.json'
-        if len(data) == 0:
-            return
-        if os.path.exists(url) is False:
-            open(url, 'w')
-            old = collections.OrderedDict()
+    def main(self):
+        try:
+            self.dbconn = psycopg2.connect(
+                host="localhost", port="5432", dbname="stock", user="yuming", password="")
+        except psycopg2.OperationalError:
+            print('DB Connection Falil')
         else:
-            data_file = open(url, 'r')
-            old = json.load(data_file)
-        for k in data:
-            old[k] = data[k]
-        new_file = open(url, 'w')
-        json.dump(old, new_file, sort_keys=True)
+            self.cursor = self.dbconn.cursor()
+            print('DB Connection Success!')
+        self.last_update_date = self.get_last_update_date()
+        self.last_update_item = self.get_last_update_item()
+        print('last_update_date:', self.last_update_date)
+        print('today: ', datetime.date.today())
+        self.request_data()
+
+    def get_last_update_date(self):
+        self.cursor.execute('SELECT corporate_option_open FROM update_date')
+        rows = self.cursor.fetchall()
+        for row in rows:
+            return row[0]
+            # return (row[0].strftime("%Y-%m-%d"))
+
+    def get_last_update_item(self):
+        self.cursor.execute(
+            'SELECT * FROM corporate_option_open ORDER BY date DESC LIMIT 1')
+        rows = self.cursor.fetchall()
+        if len(rows) > 0:
+            return rows[0]
+        return
+
+    def update_data(self):
+        return
+        # self.cursor.execute('SELECT corporate_option_open FROM update_date')
+        # for row in self.cursor:
+        #     print(row[0].strftime("%Y-%m-%d"))
 
     def request_data(self):
         now_date = datetime.date.today()
-        ufile = open(self.root + 'data/last_update_date.json', 'r')
-        last_time_obj = json.load(ufile)
-        last_time = last_time_obj[self.const_name]
-        final_request_date = {}
-        for z in range(int(last_time['year']), now_date.year + 1):
-            st_month = 1
-            end_month = 12
-            url = self.root + 'data/' + self.const_name + '/' + str(z) + '.json'
-            if os.path.exists(url) is True:
-                final_request_item = {}
-                old_file = open(url, 'r')
-                i = collections.OrderedDict(json.load(old_file))
-                final_request_item = i[list(i.keys())[-1]]
-            else:
-                final_request_item = {}
-            if z == now_date.year:
-                st_month = int(last_time['month'])
-                end_month = now_date.month
-            for y in range(st_month, end_month + 1):
-                st_day = 1
-                end_day = 31
-                if z == now_date.year and y == now_date.month:
-                    st_day = int(last_time['day']) + 1
-                    end_day = now_date.day
-                for x in range(st_day, end_day + 1):
-                    syear = str(z)
-                    smonth = str(y) if len(str(y)) != 1 else "0" + str(y)
-                    sday = str(x) if len(str(x)) != 1 else "0" + str(x)
-                    self.params["DATA_DATE_Y"] = syear
-                    self.params["DATA_DATE_M"] = smonth
-                    self.params["DATA_DATE_D"] = sday
-                    self.params["syear"] = syear
-                    self.params["smonth"] = smonth
-                    self.params["sday"] = sday
+        # next_date = self.last_update_date
+        next_date = self.last_update_date + datetime.timedelta(days=1)
+        final_data = []
+        while (next_date <= now_date):
+            syear = str(next_date.year)
+            smonth = str(next_date.month) if len(
+                str(next_date.month)) != 1 else "0" + str(next_date.month)
+            sday = str(next_date.day) if len(str(next_date.day)
+                                             ) != 1 else "0" + str(next_date.day)
+            datestart = syear + "-" + smonth + "-" + sday
+            checkDate = check_date(datestart)
+            self.params["DATA_DATE_Y"] = syear
+            self.params["DATA_DATE_M"] = smonth
+            self.params["DATA_DATE_D"] = sday
+            self.params["syear"] = syear
+            self.params["smonth"] = smonth
+            self.params["sday"] = sday
+            self.params["datestart"] = datestart
+            if checkDate:
+                try:
+                    res = requests.post(self.url, data=self.params)
+                    time.sleep(randint(1, 5))
+                except requests.exceptions.ConnectionError as e:
+                    print('ConnectionError')
+                    # Launchctl do task immediately when mac wake up, but it don't have network
+                    time.sleep(120)
+                    print('re connect')
+                    res = requests.post(self.url, data=self.params)
+                soup = BeautifulSoup(res.text, "lxml")
 
-                    self.params["datestart"] = syear + "/" + smonth + "/" + sday
-                    settle = check_date(self.params["datestart"])
-                    if settle:
-                        print(self.params["datestart"])
-                        try:
-                            res = requests.post(self.url, data=self.params)
-                        except requests.exceptions.ConnectionError as e:
-                            print('ConnectionError')
-                            # Launchctl do task immediately when mac wake up, but it don't have network
-                            time.sleep(120)
-                            print('re connect')
-                            res = requests.post(self.url, data=self.params)
+                if soup.select("table")[2].find_all("table"):
+                    print(self.params["datestart"])
+                    table = soup.select("table")[2].select("table")[0]
 
-                        soup = BeautifulSoup(res.text, "lxml")
-                        if soup.select("table")[2].find_all("table"):
-                            table = soup.select("table")[2].select("table")[0]
+                    f_buy_call = table.select("tr")[5].select("td")[
+                        7].text.strip()
+                    f_buy_put = table.select("tr")[8].select("td")[
+                        7].text.strip()
+                    f_buy_call_amount = table.select("tr")[5].select("td")[
+                        8].text.strip()
+                    f_buy_put_amount = table.select("tr")[8].select("td")[
+                        8].text.strip()
 
-                            f_buy_call = table.select("tr")[5].select("td")[7].text.strip()
-                            f_buy_put = table.select("tr")[8].select("td")[7].text.strip()
-                            f_buy_call_amount = table.select("tr")[5].select("td")[8].text.strip()
-                            f_buy_put_amount = table.select("tr")[8].select("td")[8].text.strip()
+                    f_sell_call = table.select("tr")[5].select("td")[
+                        9].text.strip()
+                    f_sell_put = table.select("tr")[8].select("td")[
+                        9].text.strip()
+                    f_sell_call_amount = table.select("tr")[5].select("td")[
+                        10].text.strip()
+                    f_sell_put_amount = table.select("tr")[8].select("td")[
+                        10].text.strip()
 
-                            f_sell_call = table.select("tr")[5].select("td")[9].text.strip()
-                            f_sell_put = table.select("tr")[8].select("td")[9].text.strip()
-                            f_sell_call_amount = table.select("tr")[5].select("td")[10].text.strip()
-                            f_sell_put_amount = table.select("tr")[8].select("td")[10].text.strip()
+                    if self.last_update_item:
+                        # print('$$$$$$', self.last_update_item)
+                        buy_call = format_number(f_buy_call)
+                        sell_put_amount = format_number(
+                            f_sell_put_amount)
+                        if self.last_update_item[0] == buy_call and self.last_update_item[-3] == sell_put_amount:
+                            print('same data!')
+                            break
 
-                            if len(final_request_item) > 0:
-                                f_buy_call = format_number(f_buy_call)
-                                f_sell_put_amount = format_number(f_sell_put_amount)
-                                # print(final_request_item['f_buy_call'], f_buy_call)
-                                if final_request_item['f_buy_call'] == f_buy_call and final_request_item['f_sell_put_amount'] == f_sell_put_amount:
-                                    break
-                            datestart = self.params["datestart"]
-                            final_request_date = format_date(datestart)
-                            self.data[datestart] = {}
-                            self.data[datestart]["f_buy_call"] = format_number(f_buy_call)
-                            self.data[datestart]["f_buy_put"] = format_number(f_buy_put)
-                            self.data[datestart]["f_buy_call_amount"] = format_number(f_buy_call_amount)
-                            self.data[datestart]["f_buy_put_amount"] = format_number(f_buy_put_amount)
-                            self.data[datestart]["f_sell_call"] = format_number(f_sell_call)
-                            self.data[datestart]["f_sell_put"] = format_number(f_sell_put)
-                            self.data[datestart]["f_sell_call_amount"] = format_number(f_sell_call_amount)
-                            self.data[datestart]["f_sell_put_amount"] = format_number(f_sell_put_amount)
-                            self.data[datestart]["is_settle"] = is_settle(datestart)
-                            final_request_item = self.data[datestart]
-                        else:
-                            print(self.params["datestart"], "no data")
-            self.update_data(self.data, str(z))
-            self.data = collections.OrderedDict()
+                    data = (
+                        format_number(f_buy_call),
+                        format_number(f_buy_put),
+                        format_number(f_buy_call_amount),
+                        format_number(f_buy_put_amount),
+                        format_number(f_sell_call),
+                        format_number(f_sell_put),
+                        format_number(f_sell_call_amount),
+                        format_number(f_sell_put_amount),
+                        is_settle(datestart),
+                        datestart)
+                    self.last_update_item = data
+                    final_data.append(data)
 
-        if len(final_request_date) > 0:
-            ufile = open(self.root + 'data/last_update_date.json', 'w')
-            last_time_obj[self.const_name]['year'] = final_request_date['year']
-            last_time_obj[self.const_name]['month'] = final_request_date['month']
-            last_time_obj[self.const_name]['day'] = final_request_date['day']
-            json.dump(last_time_obj, ufile, sort_keys=True)
+                else:
+                    print(self.params["datestart"], "no data")
+
+            next_date = next_date + datetime.timedelta(days=1)
+            # print('--', next_date < now_date)
+            # print('--', next_date.strftime("%Y-%m-%d"))
+
+        if len(final_data) > 0:
+            print('here')
+            insert_query = 'insert into corporate_option_open (f_buy_call, f_buy_put,f_buy_call_amount,f_buy_put_amount,f_sell_call,f_sell_put,f_sell_call_amount,f_sell_put_amount,is_settle,date) values %s'
+            psycopg2.extras.execute_values(
+                self.cursor, insert_query, final_data, template=None
+            )
+        update_query = 'UPDATE update_date SET corporate_option_open=%s'
+        # last_date = next_date + datetime.timedelta(days=-1)
+        last_date = now_date.strftime("%Y-%m-%d")
+        self.cursor.execute(update_query, (last_date,))
+        self.dbconn.commit()
+        return
 
 
 Crawler = OptionOpiCrawler()
-Crawler.request_data()
+# Crawler.request_data()
+# Crawler.update_data()
+if __name__ == "__main__":
+    Crawler.main()
 
 print('END ##############')

@@ -3,7 +3,7 @@ import time
 
 
 def format_date(date):
-    date_arr = date.split('/')
+    date_arr = date.split('-')
     d = {
         'year': int(date_arr[0]),
         'month': int(date_arr[1]) if date_arr[1][0:1] != "0" else int(date_arr[1][-1]),
@@ -26,10 +26,12 @@ def check_date(date):
         requeststamp = time.mktime(request_date.timetuple())
         diff = requeststamp - nowstamp
         if diff > 0:
+            print('日期超過今天')
             return False
         else:
             return True
     except ValueError:
+        print('日期錯誤')
         return False
     return True
 
@@ -53,4 +55,5 @@ def is_settle(date):
 
 
 def format_number(num):
-    return ''.join(num.split(','))
+    num = float(''.join(num.split(',')))
+    return num
