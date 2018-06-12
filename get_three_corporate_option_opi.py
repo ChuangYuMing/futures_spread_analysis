@@ -130,7 +130,7 @@ class OptionOpiCrawler:
                         buy_call = format_number(f_buy_call)
                         sell_put_amount = format_number(
                             f_sell_put_amount)
-                        if self.last_update_item[0] == buy_call and self.last_update_item[-3] == sell_put_amount:
+                        if self.last_update_item[0] == buy_call and self.last_update_item[7] == sell_put_amount:
                             print('same data!')
                             break
 

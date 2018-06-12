@@ -2,6 +2,8 @@
 # 三大法人期貨多空未平倉量
 # 只能撈前三年！！！
 
+import psycopg2
+import psycopg2.extras
 import requests
 from bs4 import BeautifulSoup
 import json
@@ -10,6 +12,7 @@ import os
 import datetime
 from package.tools import check_date, is_settle, format_number, format_date
 import time
+from random import randint
 
 print('START ############## FuturesOpiCrawler', datetime.datetime.now())
 
@@ -21,137 +24,154 @@ class FuturesOpiCrawler:
         self.root = '/Users/yuming/Documents/futures_spread_analysis/'
         self.const_name = 'three_corporate_open_interest'
         self.params = {
-          "goday": "",
-          "DATA_DATE_Y": 2012,
-          "DATA_DATE_M": "02",
-          "DATA_DATE_D": "25",
-          "syear": 2012,
-          "smonth": "02",
-          "sday": "25",
-          "datestart": "2012/02/25",
-          "COMMODITY_ID": "TXF"
+            "goday": "",
+            "DATA_DATE_Y": 2012,
+            "DATA_DATE_M": "02",
+            "DATA_DATE_D": "25",
+            "syear": 2012,
+            "smonth": "02",
+            "sday": "25",
+            "datestart": "2012/02/25",
+            "COMMODITY_ID": "TXF"
         }
 
-    def update_data(self, data, year):
-        url = self.root + 'data/' + self.const_name + '/' + year + '.json'
-        if len(data) == 0:
-            return
-        if os.path.exists(url) is False:
-            open(url, 'w')
-            old = collections.OrderedDict()
+    def main(self):
+        try:
+            self.dbconn = psycopg2.connect(
+                host="localhost", port="5432", dbname="stock", user="yuming", password="")
+        except psycopg2.OperationalError:
+            print('DB Connection Falil')
         else:
-            data_file = open(url, 'r')
-            old = json.load(data_file)
-        for k in data:
-            old[k] = data[k]
-        new_file = open(url, 'w')
-        json.dump(old, new_file, sort_keys=True)
+            self.cursor = self.dbconn.cursor()
+            print('DB Connection Success!')
+        self.last_update_date = self.get_last_update_date()
+        self.last_update_item = self.get_last_update_item()
+        print('last_update_date:', self.last_update_date)
+        print('today: ', datetime.date.today())
+        self.request_data()
+
+    def get_last_update_date(self):
+        self.cursor.execute('SELECT corporate_open_interest FROM update_date')
+        rows = self.cursor.fetchall()
+        for row in rows:
+            return row[0]
+            # return (row[0].strftime("%Y-%m-%d"))
+
+    def get_last_update_item(self):
+        self.cursor.execute(
+            'SELECT * FROM corporate_open_interest ORDER BY date DESC LIMIT 1')
+        rows = self.cursor.fetchall()
+        if len(rows) > 0:
+            return rows[0]
+        return
 
     def request_data(self):
         now_date = datetime.date.today()
-        ufile = open(self.root + 'data/last_update_date.json', 'r')
-        last_time_obj = json.load(ufile)
-        last_time = last_time_obj[self.const_name]
-        final_request_date = {}
-        for z in range(int(last_time['year']), now_date.year + 1):
-            st_month = 1
-            end_month = 12
-            url = self.root + 'data/' + self.const_name + '/' + str(z) + '.json'
-            if os.path.exists(url) is True:
-                final_request_item = {}
-                old_file = open(url, 'r')
-                i = collections.OrderedDict(json.load(old_file))
-                final_request_item = i[list(i.keys())[-1]]
-            else:
-                final_request_item = {}
-            if z == now_date.year:
-                st_month = int(last_time['month'])
-                end_month = now_date.month
-            for y in range(st_month, end_month + 1):
-                st_day = 1
-                end_day = 31
-                if z == now_date.year and y == now_date.month:
-                    st_day = int(last_time['day'] + 1)
-                    end_day = now_date.day
-                for x in range(st_day, end_day + 1):
-                    syear = str(z)
-                    smonth = str(y) if len(str(y)) != 1 else "0" + str(y)
-                    sday = str(x) if len(str(x)) != 1 else "0" + str(x)
-                    self.params["DATA_DATE_Y"] = syear
-                    self.params["DATA_DATE_M"] = smonth
-                    self.params["DATA_DATE_D"] = sday
-                    self.params["syear"] = syear
-                    self.params["smonth"] = smonth
-                    self.params["sday"] = sday
+        # next_date = self.last_update_date
+        next_date = self.last_update_date + datetime.timedelta(days=1)
+        final_data = []
 
-                    self.params["datestart"] = syear + "/" + smonth + "/" + sday
-                    settle = check_date(self.params["datestart"])
-                    if settle:
-                        print(self.params["datestart"])
-                        try:
-                            res = requests.post(self.url, data=self.params)
-                        except requests.exceptions.ConnectionError as e:
-                            print('ConnectionError')
-                            # Launchctl do task immediately when mac wake up, but it don't have network
-                            time.sleep(120)
-                            print('re connect')
-                            res = requests.post(self.url, data=self.params)
-                        soup = BeautifulSoup(res.text, "lxml")
-                        if soup.select("table")[2].find_all("table"):
-                            table = soup.select("table")[2].select("table")[0]
-                            bull_self = table.select("tr")[3].select("td")[9].text.strip()
-                            bull_trust = table.select("tr")[4].select("td")[7].text.strip()
-                            bull_foreign = table.select("tr")[5].select("td")[7].text.strip()
+        while (next_date <= now_date):
+            syear = str(next_date.year)
+            smonth = str(next_date.month) if len(
+                str(next_date.month)) != 1 else "0" + str(next_date.month)
+            sday = str(next_date.day) if len(str(next_date.day)
+                                             ) != 1 else "0" + str(next_date.day)
+            datestart = syear + "-" + smonth + "-" + sday
+            checkDate = check_date(datestart)
+            self.params["DATA_DATE_Y"] = syear
+            self.params["DATA_DATE_M"] = smonth
+            self.params["DATA_DATE_D"] = sday
+            self.params["syear"] = syear
+            self.params["smonth"] = smonth
+            self.params["sday"] = sday
 
-                            bear_self = table.select("tr")[3].select("td")[11].text.strip()
-                            bear_trust = table.select("tr")[4].select("td")[9].text.strip()
-                            bear_foreign = table.select("tr")[5].select("td")[9].text.strip()
+            self.params["datestart"] = syear + "/" + smonth + "/" + sday
+            if checkDate:
+                try:
+                    res = requests.post(self.url, data=self.params)
+                    time.sleep(randint(1, 5))
+                except requests.exceptions.ConnectionError as e:
+                    print('ConnectionError')
+                    # Launchctl do task immediately when mac wake up, but it don't have network
+                    time.sleep(120)
+                    print('re connect')
+                    res = requests.post(self.url, data=self.params)
+                soup = BeautifulSoup(res.text, "lxml")
+                if soup.select("table")[2].find_all("table"):
+                    print(self.params["datestart"])
+                    table = soup.select("table")[2].select("table")[0]
+                    bull_self = table.select("tr")[3].select("td")[
+                        9].text.strip()
+                    bull_trust = table.select("tr")[4].select("td")[
+                        7].text.strip()
+                    bull_foreign = table.select("tr")[5].select("td")[
+                        7].text.strip()
 
-                            diff_self = table.select("tr")[3].select("td")[13].text.strip()
-                            diff_trust = table.select("tr")[4].select("td")[11].text.strip()
-                            diff_foreign = table.select("tr")[5].select("td")[11].text.strip()
+                    bear_self = table.select("tr")[3].select("td")[
+                        11].text.strip()
+                    bear_trust = table.select("tr")[4].select("td")[
+                        9].text.strip()
+                    bear_foreign = table.select("tr")[5].select("td")[
+                        9].text.strip()
 
-                            if len(final_request_item) > 0:
-                                bull_self = format_number(bull_self)
-                                bear_foreign = format_number(bear_foreign)
-                                if final_request_item['bull_self'] == bull_self and final_request_item['bear_foreign'] == bear_foreign:
-                                    break
+                    diff_self = table.select("tr")[3].select("td")[
+                        13].text.strip()
+                    diff_trust = table.select("tr")[4].select("td")[
+                        11].text.strip()
+                    diff_foreign = table.select("tr")[5].select("td")[
+                        11].text.strip()
 
-                            datestart = self.params["datestart"]
-                            final_request_date = format_date(datestart)
-                            self.data[datestart] = {}
-                            self.data[datestart]["bull_self"] = format_number(bull_self)
-                            self.data[datestart]["bull_trust"] = format_number(bull_trust)
-                            self.data[datestart]["bull_foreign"] = format_number(bull_foreign)
-                            self.data[datestart]["bear_self"] = format_number(bear_self)
-                            self.data[datestart]["bear_trust"] = format_number(bear_trust)
-                            self.data[datestart]["bear_foreign"] = format_number(bear_foreign)
+                    if self.last_update_item:
+                        bull_s = format_number(bull_self)
+                        bear_f = format_number(bear_foreign)
+                        if self.last_update_item[0] == bull_s and self.last_update_item[5] == bear_f:
+                            print('same data!')
+                            break
 
-                            self.data[datestart]["diff_self"] = format_number(diff_self)
-                            self.data[datestart]["diff_trust"] = format_number(diff_trust)
-                            self.data[datestart]["diff_foreign"] = format_number(diff_foreign)
+                    data = (
+                        format_number(bull_self),
+                        format_number(bull_trust),
+                        format_number(bull_foreign),
+                        format_number(bear_self),
+                        format_number(bear_trust),
+                        format_number(bear_foreign),
+                        format_number(diff_self),
+                        format_number(diff_trust),
+                        format_number(diff_foreign),
+                        format_number(
+                            bull_self)+format_number(bull_trust)+format_number(bull_foreign),
+                        format_number(
+                            bear_self)+format_number(bear_trust)+format_number(bear_foreign),
+                        format_number(
+                            diff_self)+format_number(diff_trust)+format_number(diff_foreign),
+                        is_settle(datestart),
+                        datestart)
+                    self.last_update_item = data
+                    final_data.append(data)
 
-                            self.data[datestart]["bull_total"] = str(int(self.data[datestart]["bull_self"]) + int(self.data[datestart]["bull_trust"]) + int(self.data[datestart]["bull_foreign"]))
-                            self.data[datestart]["bear_total"] = str(int(self.data[datestart]["bear_self"]) + int(self.data[datestart]["bear_trust"]) + int(self.data[datestart]["bear_foreign"]))
-                            self.data[datestart]["diff_total"] = str(int(self.data[datestart]["diff_self"]) + int(self.data[datestart]["diff_trust"]) + int(self.data[datestart]["diff_foreign"]))
-                            self.data[datestart]["is_settle"] = is_settle(datestart)
-                            final_request_item = self.data[datestart]
-                        else:
-                            print("no data")
-                            print(self.params["datestart"])
+                else:
+                    print(self.params["datestart"], "no data")
+            next_date = next_date + datetime.timedelta(days=1)
 
-            self.update_data(self.data, str(z))
-            self.data = collections.OrderedDict()
-
-        if len(final_request_date) > 0:
-            ufile = open(self.root + 'data/last_update_date.json', 'w')
-            last_time_obj[self.const_name]['year'] = final_request_date['year']
-            last_time_obj[self.const_name]['month'] = final_request_date['month']
-            last_time_obj[self.const_name]['day'] = final_request_date['day']
-            json.dump(last_time_obj, ufile, sort_keys=True)
+        if len(final_data) > 0:
+            print('here')
+            insert_query = 'insert into corporate_open_interest (bull_self, bull_trust,bull_foreign,bear_self,bear_trust,bear_foreign,diff_self,diff_trust,diff_foreign,bull_total,bear_total,diff_total,is_settle,date) values %s'
+            psycopg2.extras.execute_values(
+                self.cursor, insert_query, final_data, template=None
+            )
+        update_query = 'UPDATE update_date SET corporate_open_interest=%s'
+        # last_date = next_date + datetime.timedelta(days=-1)
+        last_date = now_date.strftime("%Y-%m-%d")
+        self.cursor.execute(update_query, (last_date,))
+        self.dbconn.commit()
+        return
 
 
 Crawler = FuturesOpiCrawler()
-Crawler.request_data()
+# Crawler.request_data()
+# Crawler.update_data()
+if __name__ == "__main__":
+    Crawler.main()
 
 print('END ##############')
