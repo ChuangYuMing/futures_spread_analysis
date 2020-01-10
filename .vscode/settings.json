@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "/Users/yuming/.local/share/virtualenvs/futures_spread_analysis-UKSoE0wj/bin/python"
+    "python.pythonPath": "/usr/local/bin/python3",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }
