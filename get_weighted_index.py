@@ -8,6 +8,13 @@ import datetime
 import collections
 from re import sub
 from decimal import Decimal
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+cred = credentials.Certificate('firebase-adminsdk.json')
+default_app = firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 params = {
   "response": "json",
@@ -40,6 +47,14 @@ def format_number(num):
     value = value*-1 if "-" in num else value
     return str(value)
 
+# 西元
+def format_ad_date(date):
+    date_arr = date.split('/')
+    year = date_arr[0]
+    month = date_arr[1]
+    day = date_arr[2]
+    year = str(int(year) + 1911)
+    return year + '/' + month + '/' + day
 
 # 日期是否有意義
 def check_date(year, month, day):
@@ -103,38 +118,33 @@ def request_data(url, params):
 
 
 data = collections.OrderedDict()
-for z in range(2017, 2018):
-    for y in range(9, 10):
-        for x in range(1, 17):
-            syear = str(z)
-            smonth = str(y) if len(str(y)) != 1 else "0" + str(y)
-            sday = str(x) if len(str(x)) != 1 else "0" + str(x)
-            if check_date(z, y, x) is not True:
-                continue
-            params["date"] = syear + smonth + sday
-            crawl_url = "http://www.twse.com.tw/exchangeReport/MI_INDEX"
-            aa = request_data(crawl_url, params)
+for z in range(2018, 2021):
+    for y in range(1, 13):
+        syear = str(z)
+        smonth = str(y) if len(str(y)) != 1 else "0" + str(y)
+        sday = "01"
+        if check_date(z, y, 1) is not True:
+            continue
+        params["date"] = syear + smonth + sday
+        params["response"] = "json"
+        crawl_url = "https://www.twse.com.tw/indicesReport/MI_5MINS_HIST"
+        res = request_data(crawl_url, params)
 
-            if (aa['stat']) == 'OK':
-                first_row = aa['data1'][1]
-                if first_row[0] == "發行量加權股價指數":
-                    w_index = first_row[1]
-                else:
-                    print("something wrong here!!")
-
-                datestart = syear + "/" + smonth + "/" + sday
+        if (res['stat']) == 'OK':
+            datas = res["data"]
+            for item in datas:
+                datestart = format_ad_date(item[0])
                 data[datestart] = {}
-                data[datestart]["w_index"] = format_number(w_index).split(".")[0]
+                data[datestart]["open"] = format_number(item[1]).split(".")[0]
+                data[datestart]["high"] = format_number(item[2]).split(".")[0]
+                data[datestart]["low"] = format_number(item[3]).split(".")[0]
+                data[datestart]["w_index"] = format_number(item[4]).split(".")[0]
                 data[datestart]["is_settle"] = is_settle(datestart)
-                # print(datestart)
 
-            else:
-                print("no data")
-                print(params["date"])
+        else:
+            print("no data")
+            print(params["date"])
 
-    # od = collections.OrderedDict(sorted(data.items(), key=lambda t: t[0]))
-    jsonarray = json.dumps(data, sort_keys=True)
-    with open('data/weighted_index/' + syear + '.json', 'w') as outfile:
-        json.dump(data, outfile)
-
+    ref = db.collection('weighted_index').document(str(z))
+    ref.set(data)
     data = collections.OrderedDict()
