@@ -1,5 +1,6 @@
 # encoding: utf-8
 # 加權指數
+# https://www.twse.com.tw/zh/page/trading/indices/MI_5MINS_HIST.html
 
 import requests
 import json
