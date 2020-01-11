@@ -135,10 +135,10 @@ for z in range(2018, 2021):
             for item in datas:
                 datestart = format_ad_date(item[0])
                 data[datestart] = {}
-                data[datestart]["open"] = format_number(item[1]).split(".")[0]
-                data[datestart]["high"] = format_number(item[2]).split(".")[0]
-                data[datestart]["low"] = format_number(item[3]).split(".")[0]
-                data[datestart]["w_index"] = format_number(item[4]).split(".")[0]
+                data[datestart]["open"] = format_number(item[1]).split(".")[0] # 開盤
+                data[datestart]["high"] = format_number(item[2]).split(".")[0] # 最高
+                data[datestart]["low"] = format_number(item[3]).split(".")[0]  # 最低
+                data[datestart]["w_index"] = format_number(item[4]).split(".")[0] # 收盤
                 data[datestart]["is_settle"] = is_settle(datestart)
 
         else:
