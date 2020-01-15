@@ -1,5 +1,6 @@
 # encoding: utf-8
-# 台指期未平倉量
+# 期貨大額交易人未沖銷部位
+# https://www.taifex.com.tw/cht/3/largeTraderFutQry
 
 import requests
 from bs4 import BeautifulSoup
@@ -7,23 +8,22 @@ import json
 import time
 import datetime
 import collections
+from decimal import Decimal
+from re import sub
+from random import randint
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+cred = credentials.Certificate('firebase-adminsdk.json')
+default_app = firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 params = {
-  "qtype": 2,
-  "commodity_id": "TX",
-  "commodity_id2": "",
-  "goday": "",
-  "dateaddcnt": 0,
-  "DATA_DATE_Y": 2012,
-  "DATA_DATE_M": "02",
-  "DATA_DATE_D": "25",
-  "syear": 2012,
-  "smonth": "02",
-  "sday": "25",
-  "datestart": "2012/02/25",
-  "commodity_idt": "TX",
-  "commodity_id2t": "",
-  "commodity_id2t2": "",
+    'datecount': '',
+    'contractId2': '',
+    'queryDate': '2017/01/17',
+    'contractId': 'TX',
 }
 
 
@@ -72,45 +72,64 @@ def is_settle(date):
             return True
     return False
 
+def format_number(num):
+    value = Decimal(sub(r'[^\d.]', '', num))
+    value = value*-1 if "-" in num else value
+    return str(value)
+
 data = collections.OrderedDict()
 
-for z in range(2017, 2018):
-    for y in range(9, 10):
-        for x in range(1, 17):
+for z in range(2018, 2020):
+    for y in range(1, 13):
+        for x in range(1, 32):
             syear = str(z)
             smonth = str(y) if len(str(y)) != 1 else "0" + str(y)
             sday = str(x) if len(str(x)) != 1 else "0" + str(x)
-            params["DATA_DATE_Y"] = syear
-            params["DATA_DATE_M"] = smonth
-            params["DATA_DATE_D"] = sday
-            params["syear"] = syear
-            params["smonth"] = smonth
-            params["sday"] = sday
+            params["datecount"] = ''
+            params["contractId2"] = ''
+            params["contractId"] = 'TX'
+            params["queryDate"] = syear + "/" + smonth + "/" + sday
 
-            params["datestart"] = syear + "/" + smonth + "/" + sday
-            settle = check_date(params["datestart"])
-            if settle:
-                res = requests.post("http://www.taifex.com.tw/chinese/3/3_1_1.asp", data=params)
+            isValidDate = check_date(params["queryDate"])
+            if isValidDate:
+                url = "https://www.taifex.com.tw/cht/3/largeTraderFutQry"
+                try:
+                    res = requests.post(url, data=params)
+                    time.sleep(randint(1, 2))
+                except requests.exceptions.RequestException as e:
+                    print(e)
+                    time.sleep(120)
+                    print('re connect')
+                    res = requests.post(url, data=params)
+
                 soup = BeautifulSoup(res.text, "lxml")
 
-                if soup.select("table")[2].find_all("table"):
-                    table = soup.select("table")[2].select("table")[1]
-                    tr = table.select("tr")
-                    open_interest = table.select("tr")[len(tr) - 1].select("td")[12].text.strip()
+                table = soup.select_one(".sidebar_right").select("table")[2]
 
-                    datestart = params["datestart"]
+                if table.find_all("table"):
+                    tr = table.select("table")[0].select("tr")[4]
+
+                    buy_top_five = tr.select("td")[1].stripped_strings
+                    buy_top_ten = tr.select("td")[3].stripped_strings
+                    sell_top_five = tr.select("td")[5].stripped_strings
+                    sell_top_ten = tr.select("td")[7].stripped_strings
+                    total = tr.select("td")[9].stripped_strings
+
+                    datestart = params["queryDate"]
                     data[datestart] = {}
-                    data[datestart]["open_interest"] = open_interest
+                    data[datestart]["buy_top_five"] = format_number(list(buy_top_five)[0])   # 買方-前五大交易人
+                    data[datestart]["buy_top_ten"] = format_number(list(buy_top_ten)[0])     # 買方-前十大交易人
+                    data[datestart]["sell_top_five"] = format_number(list(sell_top_five)[0]) # 賣方方-前五大交易人
+                    data[datestart]["sell_top_ten"] = format_number(list(sell_top_ten)[0])   # 賣方-前十大交易人
+                    data[datestart]["total"] = format_number(list(total)[0])                 # 市場未平倉
                     data[datestart]["is_settle"] = is_settle(datestart)
-                    print(datestart)
+
+                    print(params["queryDate"])
 
                 else:
+                    print(params["queryDate"])
                     print("no data")
-                    print(params["datestart"])
 
-    # od = collections.OrderedDict(sorted(data.items(), key=lambda t: t[0]))
-    jsonarray = json.dumps(data, sort_keys=True)
-    with open('data/tx_open_interest/' + str(z) + '.json', 'w') as outfile:
-        json.dump(data, outfile)
-
+    ref = db.collection('tx_open_interest').document(str(z))
+    ref.set(data)
     data = collections.OrderedDict()
