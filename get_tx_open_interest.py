@@ -11,96 +11,64 @@ import collections
 from decimal import Decimal
 from re import sub
 from random import randint
+from package.tools import check_date, is_settle, format_number
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-cred = credentials.Certificate('firebase-adminsdk.json')
-default_app = firebase_admin.initialize_app(cred)
-db = firestore.client()
+print('START ############## TxOpenInterestCrawler', datetime.datetime.now())
 
-params = {
-    'datecount': '',
-    'contractId2': '',
-    'queryDate': '2017/01/17',
-    'contractId': 'TX',
-}
+class TxOpenInterestCrawler:
+    def __init__(self):
+        self.url = 'https://www.taifex.com.tw/cht/3/largeTraderFutQry'
+        self.data = collections.OrderedDict()
+        self.params = {
+            'datecount': '',
+            'contractId2': '',
+            'queryDate': '2017/01/17',
+            'contractId': 'TX',
+        }
 
+    def main(self):
+        cred = credentials.Certificate('firebase-adminsdk.json')
+        default_app = firebase_admin.initialize_app(cred)
+        self.db = firestore.client()
 
-# 日期是否有意義
-def check_date(date):
-    date_arr = date.split('/')
-    year = int(date_arr[0])
-    month = int(date_arr[1]) if date_arr[1][0:1] != "0" else int(date_arr[1][-1])
-    day = int(date_arr[2])
-    now_date = datetime.datetime.now()
+        self.request_data()
 
-    try:
-        request_date = datetime.date(year, month, day)
-        nowstamp = time.mktime(now_date.timetuple())
-        requeststamp = time.mktime(request_date.timetuple())
-        diff = requeststamp - nowstamp
-        if now_date.day == day:
-            if diff < -72000:
-                return True
-            else:
-                return False
-        else:
-            if diff > 0:
-                return False
-            else:
-                return True
-    except ValueError:
-        return False
-    return True
+    def saveDatas(self):
 
+        lastItemDate = next(reversed(self.data))
+        year = str(lastItemDate).split("/")[0]
 
-# 是否為結算日
-def is_settle(date):
-    date_arr = date.split('/')
-    year = int(date_arr[0])
-    month = int(date_arr[1]) if date_arr[1][0:1] != "0" else int(date_arr[1][-1])
-    day = int(date_arr[2])
-    n_date = datetime.date(year, month, day)
-    weekday = n_date.strftime("%w")
+        ref = self.db.collection('tx_open_interest').document(year)
+        ref.set(self.data)
+        self.data = collections.OrderedDict()
 
-    if weekday == "3":
-        bb_date = n_date + datetime.timedelta(days=-21)
-        b_date = n_date + datetime.timedelta(days=-14)
-        a_date = n_date + datetime.timedelta(days=7)
-        if b_date.month == month and a_date.month == month and bb_date.month != month:
-            return True
-    return False
+    def request_data(self):
+        last_update_date = '2019/12/29'
+        next_date = datetime.datetime.strptime(last_update_date, "%Y/%m/%d").date() + datetime.timedelta(days=1)
+        now_date = datetime.date.today()
 
-def format_number(num):
-    value = Decimal(sub(r'[^\d.]', '', num))
-    value = value*-1 if "-" in num else value
-    return str(value)
+        while (next_date <= now_date):
+            syear = str(next_date.year)
+            smonth = str(next_date.month) if len(
+                str(next_date.month)) != 1 else "0" + str(next_date.month)
+            sday = str(next_date.day) if len(str(next_date.day)
+                                             ) != 1 else "0" + str(next_date.day)
+            datestart = syear + "/" + smonth + "/" + sday
+            isValidDate = check_date(datestart, "/")
 
-data = collections.OrderedDict()
-
-for z in range(2018, 2020):
-    for y in range(1, 13):
-        for x in range(1, 32):
-            syear = str(z)
-            smonth = str(y) if len(str(y)) != 1 else "0" + str(y)
-            sday = str(x) if len(str(x)) != 1 else "0" + str(x)
-            params["datecount"] = ''
-            params["contractId2"] = ''
-            params["contractId"] = 'TX'
-            params["queryDate"] = syear + "/" + smonth + "/" + sday
-
-            isValidDate = check_date(params["queryDate"])
             if isValidDate:
-                url = "https://www.taifex.com.tw/cht/3/largeTraderFutQry"
+                self.params["queryDate"] = datestart
                 try:
-                    res = requests.post(url, data=params)
+                    res = requests.post(self.url, data=self.params)
                     time.sleep(randint(1, 2))
                 except requests.exceptions.RequestException as e:
                     print(e)
                     time.sleep(120)
                     print('re connect')
-                    res = requests.post(url, data=params)
+                    res = requests.post(self.url, data=self.params)
 
                 soup = BeautifulSoup(res.text, "lxml")
 
@@ -115,21 +83,32 @@ for z in range(2018, 2020):
                     sell_top_ten = tr.select("td")[7].stripped_strings
                     total = tr.select("td")[9].stripped_strings
 
-                    datestart = params["queryDate"]
-                    data[datestart] = {}
-                    data[datestart]["buy_top_five"] = format_number(list(buy_top_five)[0])   # 買方-前五大交易人
-                    data[datestart]["buy_top_ten"] = format_number(list(buy_top_ten)[0])     # 買方-前十大交易人
-                    data[datestart]["sell_top_five"] = format_number(list(sell_top_five)[0]) # 賣方方-前五大交易人
-                    data[datestart]["sell_top_ten"] = format_number(list(sell_top_ten)[0])   # 賣方-前十大交易人
-                    data[datestart]["total"] = format_number(list(total)[0])                 # 市場未平倉
-                    data[datestart]["is_settle"] = is_settle(datestart)
+                    datestart = self.params["queryDate"]
+                    self.data[datestart] = {}
+                    self.data[datestart]["buy_top_five"] = format_number(list(buy_top_five)[0])   # 買方-前五大交易人
+                    self.data[datestart]["buy_top_ten"] = format_number(list(buy_top_ten)[0])     # 買方-前十大交易人
+                    self.data[datestart]["sell_top_five"] = format_number(list(sell_top_five)[0]) # 賣方方-前五大交易人
+                    self.data[datestart]["sell_top_ten"] = format_number(list(sell_top_ten)[0])   # 賣方-前十大交易人
+                    self.data[datestart]["total"] = format_number(list(total)[0])                 # 市場未平倉
+                    self.data[datestart]["is_settle"] = is_settle(datestart, "/")
 
-                    print(params["queryDate"])
+                    print(self.params["queryDate"])
 
                 else:
-                    print(params["queryDate"])
+                    print(self.params["queryDate"])
                     print("no data")
 
-    ref = db.collection('tx_open_interest').document(str(z))
-    ref.set(data)
-    data = collections.OrderedDict()
+            next_date = next_date + datetime.timedelta(days=1)
+
+            if str(next_date.year) != syear:
+                self.saveDatas()
+
+        self.saveDatas()
+
+
+Crawler = TxOpenInterestCrawler()
+
+if __name__ == "__main__":
+    Crawler.main()
+
+print('END ##############')

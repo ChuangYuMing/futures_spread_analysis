@@ -2,8 +2,8 @@ import datetime
 import time
 
 
-def format_date(date):
-    date_arr = date.split('-')
+def format_date(date, token):
+    date_arr = date.split(token)
     d = {
         'year': int(date_arr[0]),
         'month': int(date_arr[1]) if date_arr[1][0:1] != "0" else int(date_arr[1][-1]),
@@ -13,8 +13,8 @@ def format_date(date):
 
 
 # 日期是否有意義
-def check_date(date):
-    date = format_date(date)
+def check_date(date, token):
+    date = format_date(date, token)
     year = date['year']
     month = date['month']
     day = date['day']
@@ -37,8 +37,8 @@ def check_date(date):
 
 
 # 是否為結算日
-def is_settle(date):
-    date = format_date(date)
+def is_settle(date, token):
+    date = format_date(date, token)
     year = date['year']
     month = date['month']
     day = date['day']
