@@ -45,8 +45,17 @@ class TxOpenInterestCrawler:
         ref.set(self.data)
         self.data = collections.OrderedDict()
 
+    def get_last_update_date(self):
+        docs = self.db.collection('tx_open_interest').stream()
+
+        for lastDoc in docs:
+            pass
+
+        sortedDoc = sorted(lastDoc.to_dict().items())
+        return sortedDoc[-1][0]
+
     def request_data(self):
-        last_update_date = '2019/12/29'
+        last_update_date = self.get_last_update_date()
         next_date = datetime.datetime.strptime(last_update_date, "%Y/%m/%d").date() + datetime.timedelta(days=1)
         now_date = datetime.date.today()
 
