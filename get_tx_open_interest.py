@@ -42,7 +42,7 @@ class TxOpenInterestCrawler:
         year = str(lastItemDate).split("/")[0]
 
         ref = self.db.collection('tx_open_interest').document(year)
-        ref.set(self.data)
+        ref.set(self.data, merge=True)
         self.data = collections.OrderedDict()
 
     def get_last_update_date(self):
@@ -56,7 +56,7 @@ class TxOpenInterestCrawler:
 
     def request_data(self):
         last_update_date = self.get_last_update_date()
-        next_date = datetime.datetime.strptime(last_update_date, "%Y/%m/%d").date() + datetime.timedelta(days=1)
+        next_date = datetime.datetime.strptime(last_update_date, "%Y/%m/%d").date()
         now_date = datetime.date.today()
 
         while (next_date <= now_date):

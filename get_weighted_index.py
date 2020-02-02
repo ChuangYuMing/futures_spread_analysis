@@ -34,7 +34,7 @@ class WeightedIndextCrawler:
 
     def saveDatas(self, year):
         ref = self.db.collection('weighted_index').document(str(year))
-        ref.set(self.data)
+        ref.set(self.data, merge=True)
         self.data = collections.OrderedDict()
 
     # 西元
