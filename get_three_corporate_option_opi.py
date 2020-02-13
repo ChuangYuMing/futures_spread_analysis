@@ -71,7 +71,7 @@ class OptionOpiCrawler:
             datestart = syear + "/" + smonth + "/" + sday
             isValidDate = check_date(datestart, "/")
             self.params["queryDate"] = datestart
-  
+
             if isValidDate:
                 try:
                     res = requests.post(self.url, data=self.params)
@@ -84,8 +84,14 @@ class OptionOpiCrawler:
 
                 soup = BeautifulSoup(res.text, "lxml")
 
-                table = soup.select_one(".sidebar_right").select("table")[2]
-                
+                wrapper = soup.select_one(".sidebar_right")
+
+                if not wrapper:
+                    print(self.params["queryDate"], 'can not query now')
+                    break
+
+                table = wrapper.select("table")[2]
+
                 if table.find_all("table"):
                     print(self.params["queryDate"])
                     table = table.select("table")[0]
@@ -154,9 +160,9 @@ class OptionOpiCrawler:
                     self.data[datestart]["self_short_amount"] = self_short_amount
                     self.data[datestart]["self_net"] = self_net
                     self.data[datestart]["self_net_amount"] = self_net_amount
-                    
+
                     self.data[datestart]["is_settle"] = is_settle(datestart, "/")
-                        
+
                 else:
                     print(self.params["queryDate"], "no data")
 
@@ -164,7 +170,7 @@ class OptionOpiCrawler:
 
             if str(next_date.year) != syear:
                 self.saveDatas()
-                
+
         self.saveDatas()
             # print('--', next_date < now_date)
             # print('--', next_date.strftime("%Y-%m-%d"))
