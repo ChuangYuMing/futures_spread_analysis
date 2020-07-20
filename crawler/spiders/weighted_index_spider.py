@@ -14,6 +14,8 @@ from dateutil.relativedelta import relativedelta
 import collections
 import json
 from package.tools import check_date, is_settle, format_number
+from package.storage import Storage
+
 
 class weightedIndexSpider(scrapy.Spider):
     name = 'weighted_index'
@@ -21,6 +23,7 @@ class weightedIndexSpider(scrapy.Spider):
     def __init__(self, category=None, *args, **kwargs):
         super(weightedIndexSpider, self).__init__(*args, **kwargs)
         
+        self.dataStorage = Storage('weighted_index')
         self.data = collections.OrderedDict()
         self.today = datetime.date.today()
         self.url = 'https://www.twse.com.tw/indicesReport/MI_5MINS_HIST'
@@ -93,19 +96,15 @@ class weightedIndexSpider(scrapy.Spider):
         crawler.signals.connect(spider.spider_closed, signal=signals.spider_closed)
         return spider
 
-
     def spider_closed(self, spider):
         for year in self.data:
-            path = 'test/%s.json' % year
             newData = self.data[year]
             oldData = dict()
 
             try:
-                with open(path, 'r') as old:
-                    oldData = json.load(old)
-                    newData.update(oldData)
+                oldData = self.dataStorage.getOldData(year)
+                newData.update(oldData)
             except:
                 pass
 
-            with open(path, 'w') as new:
-                json.dump(newData, new, indent=2, sort_keys=True)
+            self.dataStorage.saveData(year, newData)

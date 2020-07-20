@@ -64,3 +64,5 @@ target/
 firebase-adminsdk.json
 
 .vscode/
+
+cloud_key.json

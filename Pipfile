@@ -32,6 +32,7 @@ google-cloud-firestore = "*"
 scrapy = "*"
 python-dateutil = "*"
 fake-useragent = "*"
+google-cloud-storage = "*"
 
 [dev-packages]
 "autopep8" = "*"
