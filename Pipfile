@@ -29,7 +29,9 @@ virtualenv = "==15.1.0"
 pylint = "*"
 firebase-admin = "*"
 google-cloud-firestore = "*"
+scrapy = "*"
+python-dateutil = "*"
+fake-useragent = "*"
 
 [dev-packages]
 "autopep8" = "*"
-
