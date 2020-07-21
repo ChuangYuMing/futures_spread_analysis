@@ -4,6 +4,7 @@ from twisted.internet import reactor
 from multiprocessing import Process, Queue
 from spiders.weighted_index_spider import WeightedIndexSpider
 from spiders.quotes_spider import QuotesSpider
+import base64
 
 def crawl(q, spider):
     try:
@@ -27,9 +28,19 @@ def run_spider(spider):
     if result is not None:
         raise result
 
-def main(arg):
+def main():
     run_spider(WeightedIndexSpider)
     run_spider(QuotesSpider)
+
+def cloud_pubsub(event, context):
+    """Triggered from a message on a Cloud Pub/Sub topic.
+    Args:
+         event (dict): Event payload.
+         context (google.cloud.functions.Context): Metadata for the event.
+    """
+    pubsub_message = base64.b64decode(event['data']).decode('utf-8')
+    print(pubsub_message)
+    main()
 
 if __name__ == '__main__':
     main()

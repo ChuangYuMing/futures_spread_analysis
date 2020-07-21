@@ -16,6 +16,7 @@ import collections
 import json
 
 # for cloud function call && scrapy crawl command call
+# softlink package folder to root
 try:
     from package.tools import check_date, is_settle, format_number
     from package.storage import Storage
