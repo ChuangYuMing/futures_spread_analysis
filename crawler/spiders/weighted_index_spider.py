@@ -2,9 +2,9 @@
 # 加權指數
 # https://www.twse.com.tw/zh/page/trading/indices/MI_5MINS_HIST.html
 
+
 import scrapy
-from scrapy import signals
-from scrapy import Spider
+from scrapy import signals, Spider
 from urllib.parse import urlencode
 import time
 from random import randint
@@ -14,15 +14,22 @@ from copy import copy
 from dateutil.relativedelta import relativedelta
 import collections
 import json
-from package.tools import check_date, is_settle, format_number
-from package.storage import Storage
+
+# for cloud function call && scrapy crawl command call
+try:
+    from package.tools import check_date, is_settle, format_number
+    from package.storage import Storage
+except:
+    from spiders.package.tools import check_date, is_settle, format_number
+    from spiders.package.storage import Storage
 
 
-class weightedIndexSpider(scrapy.Spider):
+
+class WeightedIndexSpider(scrapy.Spider):
     name = 'weighted_index'
         
     def __init__(self, category=None, *args, **kwargs):
-        super(weightedIndexSpider, self).__init__(*args, **kwargs)
+        super(WeightedIndexSpider, self).__init__(*args, **kwargs)
         
         self.dataStorage = Storage('weighted_index')
         self.data = collections.OrderedDict()
@@ -108,7 +115,7 @@ class weightedIndexSpider(scrapy.Spider):
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
-        spider = super(weightedIndexSpider, cls).from_crawler(crawler, *args, **kwargs)
+        spider = super(WeightedIndexSpider, cls).from_crawler(crawler, *args, **kwargs)
         crawler.signals.connect(spider.spider_closed, signal=signals.spider_closed)
         return spider
 
@@ -124,3 +131,4 @@ class weightedIndexSpider(scrapy.Spider):
                 pass
 
             self.dataStorage.saveData(year, newData)
+
