@@ -7,6 +7,7 @@ from scrapy import signals
 from scrapy import Spider
 from urllib.parse import urlencode
 import time
+from random import randint
 import datetime
 import logging
 from copy import copy
@@ -67,11 +68,26 @@ class weightedIndexSpider(scrapy.Spider):
         while(targetDateObj['datetime'] <= self.endObj['datetime']):
             self.params['date'] = self.getFormatDate(targetDateObj['datetime'])
             url = self.url + '?' + urlencode(self.params)
-            yield scrapy.Request(url=url, callback=self.parse, cb_kwargs=dict(targetDateObj=copy(targetDateObj)))
+            yield scrapy.Request(
+                url=url,
+                callback=self.parse,
+                cb_kwargs=dict(targetDateObj=copy(targetDateObj)),
+                errback=self.handle_failure)
 
             targetDateObj['datetime'] = targetDateObj['datetime'] + relativedelta(months=1)
             targetDateObj['year'] = targetDateObj['datetime'].year
             targetDateObj['month'] = targetDateObj['datetime'].month
+
+    def handle_failure(self, failure):
+        self.log(failure, level=logging.ERROR)
+        # try with a new proxy
+        self.log('restart from the failed url {}'.format(failure.request.url))
+        time.sleep(120)
+        yield scrapy.Request(
+            url=failure.request.url,
+            callback=self.parse,
+            cb_kwargs=Failure.request.cb_kwargs,
+            errback=self.handle_failure)
 
     def parse(self, response, targetDateObj):
         print(targetDateObj['datetime'])
