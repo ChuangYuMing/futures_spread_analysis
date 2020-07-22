@@ -123,13 +123,13 @@ class WeightedIndexSpider(scrapy.Spider):
     def spider_closed(self, spider):
         for year in self.data:
             newData = self.data[year]
-            oldData = dict()
+            data = dict()
 
             try:
-                oldData = self.dataStorage.getOldData(year)
-                newData.update(oldData)
+                data = self.dataStorage.getOldData(year)
             except:
                 pass
 
-            self.dataStorage.saveData(year, newData)
+            data.update(newData)
+            self.dataStorage.saveData(year, data)
 
