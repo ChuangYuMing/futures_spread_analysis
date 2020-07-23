@@ -94,7 +94,7 @@ class WeightedIndexSpider(scrapy.Spider):
         yield scrapy.Request(
             url=failure.request.url,
             callback=self.parse,
-            cb_kwargs=Failure.request.cb_kwargs,
+            cb_kwargs=failure.request.cb_kwargs,
             errback=self.handle_failure)
 
     def parse(self, response, targetDateObj):

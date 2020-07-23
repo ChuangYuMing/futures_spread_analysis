@@ -3,7 +3,7 @@ from scrapy.utils.project import get_project_settings
 from twisted.internet import reactor
 from multiprocessing import Process, Queue
 from spiders.weighted_index_spider import WeightedIndexSpider
-from spiders.quotes_spider import QuotesSpider
+from spiders.three_corporate_option_opi_spider import OptionOpiSpider
 import base64
 
 def crawl(q, spider):
@@ -29,8 +29,8 @@ def run_spider(spider):
         raise result
 
 def main():
-    run_spider(WeightedIndexSpider)
-    run_spider(QuotesSpider)
+    # run_spider(WeightedIndexSpider)
+    run_spider(OptionOpiSpider)
 
 def cloud_pubsub(event, context):
     """Triggered from a message on a Cloud Pub/Sub topic.
