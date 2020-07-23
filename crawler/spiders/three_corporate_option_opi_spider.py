@@ -1,4 +1,5 @@
 # encoding: utf-8
+# pylint: disable=E1101
 # 三大法人選擇權未平倉量
 # 只能撈前三年！！！
 # https://www.taifex.com.tw/cht/3/callsAndPutsDate
@@ -21,10 +22,10 @@ from random import randint
 # for cloud function call && scrapy crawl command call
 # softlink package folder to root
 try:
-    from package.tools import check_date, is_settle, format_number, getDateObj
+    from package.tools import is_settle, format_number, getDateObj
     from package.storage import Storage
 except:
-    from spiders.package.tools import check_date, is_settle, format_number, getDateObj
+    from spiders.package.tools import is_settle, format_number, getDateObj
     from spiders.package.storage import Storage
 
 
@@ -192,12 +193,6 @@ class OptionOpiSpider(scrapy.Spider):
         return spider
 
     def spider_closed(self, spider):
-        # for year in self.data:
-        #     newData = self.data[year]
-        #     filename = './test/%s.json' % year
-        #     with open(filename, 'w') as f:
-        #         f.write(json.dumps(newData, indent=2, sort_keys=True))  
-
         for year in self.data:
             newData = self.data[year]
             data = dict()

@@ -1,7 +1,7 @@
 # encoding: utf-8
+# pylint: disable=E1101
 # 加權指數
 # https://www.twse.com.tw/zh/page/trading/indices/MI_5MINS_HIST.html
-
 
 import scrapy
 from scrapy import signals, Spider
@@ -18,10 +18,10 @@ import json
 # for cloud function call && scrapy crawl command call
 # softlink package folder to root
 try:
-    from package.tools import check_date, is_settle, format_number
+    from package.tools import is_settle, format_number
     from package.storage import Storage
 except:
-    from spiders.package.tools import check_date, is_settle, format_number
+    from spiders.package.tools import is_settle, format_number
     from spiders.package.storage import Storage
 
 
@@ -32,7 +32,7 @@ class WeightedIndexSpider(scrapy.Spider):
     def __init__(self, category=None, *args, **kwargs):
         super(WeightedIndexSpider, self).__init__(*args, **kwargs)
         
-        self.dataStorage = Storage('weighted_index')
+        self.dataStorage = Storage(self.name)
         self.data = collections.OrderedDict()
         self.today = datetime.date.today()
         self.url = 'https://www.twse.com.tw/indicesReport/MI_5MINS_HIST'
