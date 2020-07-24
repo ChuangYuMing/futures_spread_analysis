@@ -74,7 +74,7 @@ class OptionOpiSpider(scrapy.Spider):
                 url=self.url,
                 formdata=self.params,
                 callback=self.parse,
-                cb_kwargs=dict(targetDateObj=copy(targetDateObj)),
+                cb_kwargs=dict(targetDateObj=copy(targetDateObj), params=copy(self.params)),
                 errback=self.handle_failure)
 
             targetDateObj['datetime'] = targetDateObj['datetime'] + relativedelta(days=1)
@@ -87,13 +87,14 @@ class OptionOpiSpider(scrapy.Spider):
         # try with a new proxy
         self.log('restart from the failed url {}'.format(failure.request.url))
         time.sleep(120)
-        yield scrapy.Request(
+        yield scrapy.FormRequest(
             url=failure.request.url,
+            formdata=failure.request.cb_kwargs['params'],
             callback=self.parse,
             cb_kwargs=failure.request.cb_kwargs,
             errback=self.handle_failure)
 
-    def parse(self, response, targetDateObj):
+    def parse(self, response, targetDateObj, params):
         queryDate = self.getQueryDate(targetDateObj['datetime'])
         soup = BeautifulSoup(response.text, "lxml")
         wrapper = soup.select_one(".sidebar_right")
