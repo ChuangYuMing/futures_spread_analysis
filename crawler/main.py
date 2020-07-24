@@ -5,6 +5,7 @@ from multiprocessing import Process, Queue
 from spiders.weighted_index_spider import WeightedIndexSpider
 from spiders.three_corporate_option_opi_spider import OptionOpiSpider
 from spiders.tx_open_interest_spider import TxOpenInterestSpider
+from spiders.three_corporate_open_interest_spider import FuturesOpiSpider
 import base64
 
 def crawl(q, spider):
@@ -33,6 +34,7 @@ def main():
     run_spider(WeightedIndexSpider)
     run_spider(OptionOpiSpider)
     run_spider(TxOpenInterestSpider)
+    run_spider(FuturesOpiSpider)
 
 def cloud_pubsub(event, context):
     """Triggered from a message on a Cloud Pub/Sub topic.
