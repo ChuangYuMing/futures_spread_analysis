@@ -65,3 +65,7 @@ firebase-adminsdk.json
 
 .vscode/
 node_modules
+
+cloud_key.json
+
+.DS_Store
