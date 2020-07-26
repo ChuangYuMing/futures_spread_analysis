@@ -64,3 +64,4 @@ target/
 firebase-adminsdk.json
 
 .vscode/
+node_modules
