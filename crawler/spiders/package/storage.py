@@ -13,4 +13,5 @@ class Storage:
 
     def saveData(self, year, data):
         blob = self.bucket.blob('%s/%s.json' % (self.folderName, year))
-        blob.upload_from_string(json.dumps(data, indent=2, sort_keys=True))
+        json_string = json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False)
+        blob.upload_from_string(json_string, content_type='application/json;charset=UTF-8')

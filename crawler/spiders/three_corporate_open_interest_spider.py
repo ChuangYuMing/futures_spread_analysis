@@ -97,7 +97,13 @@ class FuturesOpiSpider(scrapy.Spider):
     def parse(self, response, targetDateObj, params):
         queryDate = self.getQueryDate(targetDateObj['datetime'])
         soup = BeautifulSoup(response.text, "lxml")
-        table = soup.select_one(".sidebar_right").select("table")[2]
+        sidebar_right = soup.select_one(".sidebar_right")
+
+        if sidebar_right is None:
+             print(queryDate, "no data")
+             return 
+             
+        table = sidebar_right.select("table")[2]
 
         if len(table.find_all("table")) == 0:
             print(queryDate, "no data")

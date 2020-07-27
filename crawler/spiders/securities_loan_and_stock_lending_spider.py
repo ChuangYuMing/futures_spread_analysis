@@ -17,6 +17,9 @@ import collections
 import json
 from bs4 import BeautifulSoup
 from random import randint
+import re
+import csv
+import traceback
 
 # for cloud function call && scrapy crawl command call
 # softlink package folder to root
@@ -63,7 +66,7 @@ class CreditSpider(scrapy.Spider):
     def start_requests(self):
         targetDateObj = copy(self.startObj)
         while(targetDateObj['datetime'] <= self.endObj['datetime']):
-            self.params['date'] = self.getQueryDate(targetDateObj['datetime'])
+            self.params['date'] = self.getFormatDate(targetDateObj['datetime'])
             url = self.url + '?' + urlencode(self.params)
             time.sleep(randint(2,3))
             yield scrapy.Request(
@@ -90,59 +93,51 @@ class CreditSpider(scrapy.Spider):
 
     def parse(self, response, targetDateObj, params):
         queryDate = self.getQueryDate(targetDateObj['datetime'])
-        soup = BeautifulSoup(response.text, "lxml")
-        table = soup.select_one(".sidebar_right").select("table")[2]
+        cr = csv.reader(response.text.splitlines(), delimiter=',')
+        my_list = list(cr)
 
-        if len(table.find_all("table")) == 0:
+        if len(my_list) < 200:
             print(queryDate, "no data")
             return
 
         print(queryDate)
 
-        try:
-            table = table.select("table")[0]
+        for row in my_list:
+            try:
+                if len(row) != 16:
+                    continue
 
-            bull_self = table.select("tr")[3].select("td")[9].text.strip() #自營多方口數
-            bull_self_amount = table.select("tr")[3].select("td")[10].text.strip()  #自營多方金額
-            bull_foreign = table.select("tr")[5].select("td")[7].text.strip()  #外資多方口數
-            bull_foreign_amount = table.select("tr")[5].select("td")[8].text.strip() #外資多方金額
+                code = re.sub('=|"', '', row[0])
 
-            bear_self = table.select("tr")[3].select("td")[11].text.strip()  #自營空方口數
-            bear_self_amount = table.select("tr")[3].select("td")[12].text.strip()  #自營空方金額
-            bear_foreign = table.select("tr")[5].select("td")[9].text.strip()  #外資空方口數
-            bear_foreign_amount = table.select("tr")[5].select("td")[10].text.strip()  #外資空方金額
+                if code == '':
+                    continue
 
-            diff_self = table.select("tr")[3].select("td")[13].text.strip() #自營多空淨額口數
-            diff_self_amount = table.select("tr")[3].select("td")[14].text.strip() #自營多空淨額金額
-            diff_foreign = table.select("tr")[5].select("td")[11].text.strip()  #外資多空淨額口數
-            diff_foreign_amount = table.select("tr")[5].select("td")[12].text.strip()  #外資多空淨額金額
-
-            year = targetDateObj['year']
-            if year not in self.data:
-                self.data[year] = {}
-            datestart = queryDate
-
-            self.data[year][datestart] = {}
-            self.data[year][datestart]["bull_self"] = format_number(bull_self)
-            self.data[year][datestart]["bull_self_amount"] = format_number(bull_self_amount)
-            self.data[year][datestart]["bull_foreign"] = format_number(bull_foreign)
-            self.data[year][datestart]["bull_foreign_amount"] = format_number(bull_foreign_amount)
-            
-            self.data[year][datestart]["bear_self"] = format_number(bear_self)
-            self.data[year][datestart]["bear_self_amount"] = format_number(bear_self_amount)  
-            self.data[year][datestart]["bear_foreign"] = format_number(bear_foreign)
-            self.data[year][datestart]["bear_foreign_amount"] = format_number(bear_foreign_amount)
-            
-            self.data[year][datestart]["diff_self"] = format_number(diff_self)
-            self.data[year][datestart]["diff_self_amount"] = format_number(diff_self_amount)
-            self.data[year][datestart]["diff_foreign"] = format_number(diff_foreign)
-            self.data[year][datestart]["diff_foreign_amount"] = format_number(diff_foreign_amount)       
-
-            self.data[year][datestart]["is_settle"] = is_settle(datestart, "/")
-            
-        except:
-            print('something error')
-
+                credit_data = {
+                    "date": queryDate,
+                    "sl_preDay_balance": format_number(row[2]),
+                    "sl_sell": format_number(row[3]),
+                    "sl_buy": format_number(row[4]),
+                    "sl_cash_stock": format_number(row[5]),
+                    "sl_day_balance": format_number(row[6]),
+                    "sl_limit": format_number(row[7]),
+                    "bw_preDay_balance": format_number(row[8]),
+                    "bw_sell_on_day": format_number(row[9]),
+                    "bw_return_on_day": format_number(row[10]),
+                    "bw_adjust_on_day": format_number(row[11]),
+                    "bw_day_balance": format_number(row[12]),
+                    "bw_limit_on_next_business_day": format_number(row[13])
+                }
+    
+                if code not in self.data:
+                    self.data[code] = {
+                        "code": code,
+                        "name": row[1],
+                        "credit_data": [credit_data]
+                    }
+                else:
+                    self.data[code]['credit_data'].append(credit_data)
+            except:
+                continue
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
@@ -151,15 +146,37 @@ class CreditSpider(scrapy.Spider):
         return spider
 
     def spider_closed(self, spider):
-        for year in self.data:
-            newData = self.data[year]
-            data = dict()
+        # filename = 'test/sl.json'
+        # with open(filename, 'w', encoding='utf8') as f:
+        #     f.write(json.dumps(self.data, ensure_ascii=False, indent=2, sort_keys=True))
+        fileName = 'sl'
+        newData = dict()
+        try:
+            newData = self.dataStorage.getOldData(fileName)
+        except:
+            pass
+        
+        for code in self.data:
+            if code not in newData:
+                newData[code] = self.data[code]
+            else:
+                newData[code]['credit_data'] += self.data[code]['credit_data']
 
-            try:
-                data = self.dataStorage.getOldData(year)
-            except:
-                pass
+        for target_list in expression_list:
+            pass
+        self.dataStorage.saveData(fileName, newData)
 
-            data.update(newData)
-            self.dataStorage.saveData(year, data)
+            
 
+
+# ['2424', '隴華', '0', '0', '0', '0', '0', '7,500,000',|| '0', '0', '0', '0', '0', '1,400', '', '']
+
+# 融券||借券賣出
+# 股票代號, 股票名稱, 前日餘額, 賣出, 買進, 現券, 今日餘額, 限額,|| 前日餘額, 當日賣出, 當日還券, 當日調整, 當日餘額, 次一營業日可限額
+
+# 1.「借券賣出當日餘額＝前日餘額+當日賣出-當日還券+當日調整」數額。
+# 2. 借券賣出股數含鉅額交易股數。
+# 3.「當日調整」數額：為當日集中市場交易類別(普通部位)、(信用部位)與(借券部位)相互調整數額，及錯帳申報等數額。
+# 4.「今日可借券賣出限額」：自106年2月23日起為每日盤中借券賣出委託量不得超過該種有價證券前三十個營業日之日平均成交數量之百分之三十。當發生信用額度分配時，依「借券總量控管」辦法產生融券限額與今日可借券賣出限額。
+# 託額度之限制，故個股借券賣出成交數量可能大於其當日可借券賣出限額。
+# 5. 配合標的證券維護作業系統完成之時間點，本項資訊將於每日晚間執行二次更新作業，更新時間分別約為20時30分及22時30分，實際視日結作業完成時間可能有所異動。
