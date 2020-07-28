@@ -129,14 +129,17 @@ class CreditSpider(scrapy.Spider):
                 }
     
                 if code not in self.data:
+                    credit_data_item = {}
+                    credit_data_item[queryDate] = credit_data
                     self.data[code] = {
                         "code": code,
                         "name": row[1],
-                        "credit_data": [credit_data]
+                        "credit_data": credit_data_item
                     }
                 else:
-                    self.data[code]['credit_data'].append(credit_data)
+                    self.data[code]['credit_data'][queryDate] = credit_data
             except:
+                traceback.print_exc()
                 continue
 
     @classmethod
@@ -146,9 +149,6 @@ class CreditSpider(scrapy.Spider):
         return spider
 
     def spider_closed(self, spider):
-        # filename = 'test/sl.json'
-        # with open(filename, 'w', encoding='utf8') as f:
-        #     f.write(json.dumps(self.data, ensure_ascii=False, indent=2, sort_keys=True))
         fileName = 'sl'
         newData = dict()
         try:
@@ -160,10 +160,13 @@ class CreditSpider(scrapy.Spider):
             if code not in newData:
                 newData[code] = self.data[code]
             else:
-                newData[code]['credit_data'] += self.data[code]['credit_data']
+                for date in self.data[code]['credit_data']:
+                    item = self.data[code]['credit_data'][date]
+                    if date in newData[code]['credit_data']:
+                        newData[code]['credit_data'][date].update(item)
+                    else:
+                        newData[code]['credit_data'][date] = item
 
-        for target_list in expression_list:
-            pass
         self.dataStorage.saveData(fileName, newData)
 
             
