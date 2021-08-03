@@ -72,4 +72,6 @@ crawler/bin
 
 pyvenv.cfg
 
+package
+
 .DS_Store
