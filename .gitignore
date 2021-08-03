@@ -68,4 +68,8 @@ node_modules
 
 cloud_key.json
 
+crawler/bin
+
+pyvenv.cfg
+
 .DS_Store
