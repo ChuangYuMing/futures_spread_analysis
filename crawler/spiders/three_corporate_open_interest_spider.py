@@ -41,7 +41,7 @@ class FuturesOpiSpider(scrapy.Spider):
         self.today = datetime.date.today()
         self.url = 'https://www.taifex.com.tw/cht/3/futContractsDate'
         self.params = {
-            'queryType': '3',
+            'queryType': '1',
             'goDay': '',
             'doQuery': '1',
             'dateaddcnt': '0',
@@ -113,21 +113,20 @@ class FuturesOpiSpider(scrapy.Spider):
 
         try:
             table = table.select("table")[0]
+            bull_self = table.select("tr")[3].select("td")[6].text.strip() #自營多方口數
+            bull_self_amount = table.select("tr")[3].select("td")[7].text.strip()  #自營多方金額
+            bull_foreign = table.select("tr")[5].select("td")[6].text.strip()  #外資多方口數
+            bull_foreign_amount = table.select("tr")[5].select("td")[7].text.strip() #外資多方金額
 
-            bull_self = table.select("tr")[3].select("td")[9].text.strip() #自營多方口數
-            bull_self_amount = table.select("tr")[3].select("td")[10].text.strip()  #自營多方金額
-            bull_foreign = table.select("tr")[5].select("td")[7].text.strip()  #外資多方口數
-            bull_foreign_amount = table.select("tr")[5].select("td")[8].text.strip() #外資多方金額
+            bear_self = table.select("tr")[3].select("td")[8].text.strip()  #自營空方口數
+            bear_self_amount = table.select("tr")[3].select("td")[9].text.strip()  #自營空方金額
+            bear_foreign = table.select("tr")[5].select("td")[8].text.strip()  #外資空方口數
+            bear_foreign_amount = table.select("tr")[5].select("td")[9].text.strip()  #外資空方金額
 
-            bear_self = table.select("tr")[3].select("td")[11].text.strip()  #自營空方口數
-            bear_self_amount = table.select("tr")[3].select("td")[12].text.strip()  #自營空方金額
-            bear_foreign = table.select("tr")[5].select("td")[9].text.strip()  #外資空方口數
-            bear_foreign_amount = table.select("tr")[5].select("td")[10].text.strip()  #外資空方金額
-
-            diff_self = table.select("tr")[3].select("td")[13].text.strip() #自營多空淨額口數
-            diff_self_amount = table.select("tr")[3].select("td")[14].text.strip() #自營多空淨額金額
-            diff_foreign = table.select("tr")[5].select("td")[11].text.strip()  #外資多空淨額口數
-            diff_foreign_amount = table.select("tr")[5].select("td")[12].text.strip()  #外資多空淨額金額
+            diff_self = table.select("tr")[3].select("td")[10].text.strip() #自營多空淨額口數
+            diff_self_amount = table.select("tr")[3].select("td")[11].text.strip() #自營多空淨額金額
+            diff_foreign = table.select("tr")[5].select("td")[10].text.strip()  #外資多空淨額口數
+            diff_foreign_amount = table.select("tr")[5].select("td")[11].text.strip()  #外資多空淨額金額
 
             year = targetDateObj['year']
             if year not in self.data:
@@ -152,8 +151,9 @@ class FuturesOpiSpider(scrapy.Spider):
 
             self.data[year][datestart]["is_settle"] = is_settle(datestart, "/")
             
-        except:
+        except Exception as e:
             print('something error')
+            print(e)
 
 
     @classmethod
