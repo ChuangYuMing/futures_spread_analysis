@@ -113,25 +113,25 @@ class OptionOpiSpider(scrapy.Spider):
         table = table.select("table")[0]
 
         try:
-            f_buy_call = table.select("tr")[5].select("td")[7].text.strip()
-            f_buy_put = table.select("tr")[8].select("td")[7].text.strip()
-            f_buy_call_amount = table.select("tr")[5].select("td")[8].text.strip()
-            f_buy_put_amount = table.select("tr")[8].select("td")[8].text.strip()
+            f_buy_call = table.select("tr")[5].select("td")[6].text.strip()
+            f_buy_put = table.select("tr")[8].select("td")[6].text.strip()
+            f_buy_call_amount = table.select("tr")[5].select("td")[7].text.strip()
+            f_buy_put_amount = table.select("tr")[8].select("td")[7].text.strip()
 
-            f_sell_call = table.select("tr")[5].select("td")[9].text.strip()
-            f_sell_put = table.select("tr")[8].select("td")[9].text.strip()
-            f_sell_call_amount = table.select("tr")[5].select("td")[10].text.strip()
-            f_sell_put_amount = table.select("tr")[8].select("td")[10].text.strip()
+            f_sell_call = table.select("tr")[5].select("td")[8].text.strip()
+            f_sell_put = table.select("tr")[8].select("td")[8].text.strip()
+            f_sell_call_amount = table.select("tr")[5].select("td")[9].text.strip()
+            f_sell_put_amount = table.select("tr")[8].select("td")[9].text.strip()
 
-            self_buy_call = table.select("tr")[3].select("td")[10].text.strip()
-            self_buy_put = table.select("tr")[6].select("td")[8].text.strip()
-            self_buy_call_amount = table.select("tr")[3].select("td")[11].text.strip()
-            self_buy_put_amount = table.select("tr")[6].select("td")[9].text.strip()
+            self_buy_call = table.select("tr")[3].select("td")[6].text.strip()
+            self_buy_put = table.select("tr")[6].select("td")[6].text.strip()
+            self_buy_call_amount = table.select("tr")[3].select("td")[7].text.strip()
+            self_buy_put_amount = table.select("tr")[6].select("td")[7].text.strip()
 
-            self_sell_call = table.select("tr")[3].select("td")[12].text.strip()
-            self_sell_put = table.select("tr")[6].select("td")[10].text.strip()
-            self_sell_call_amount = table.select("tr")[3].select("td")[13].text.strip()
-            self_sell_put_amount = table.select("tr")[6].select("td")[11].text.strip()
+            self_sell_call = table.select("tr")[3].select("td")[8].text.strip()
+            self_sell_put = table.select("tr")[6].select("td")[8].text.strip()
+            self_sell_call_amount = table.select("tr")[3].select("td")[9].text.strip()
+            self_sell_put_amount = table.select("tr")[6].select("td")[9].text.strip()
 
             f_long = format_number(f_buy_call) + format_number(f_sell_put) #外資多方口數
             f_long_amount = format_number(f_buy_call_amount) + format_number(f_sell_put_amount) #外資多方契約金額
@@ -183,8 +183,9 @@ class OptionOpiSpider(scrapy.Spider):
             self.data[year][datestart]["self_net_amount"] = self_net_amount
             self.data[year][datestart]["is_settle"] = is_settle(datestart, "/")
             
-        except:
+        except Exception as e:
             print('something error')
+            print(e)
 
 
     @classmethod
