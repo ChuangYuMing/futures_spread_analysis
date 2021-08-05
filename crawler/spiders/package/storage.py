@@ -1,5 +1,6 @@
 from google.cloud import storage
 import json
+import gzip
 
 class Storage:
     def __init__(self, folderName):
@@ -13,5 +14,12 @@ class Storage:
 
     def saveData(self, year, data):
         blob = self.bucket.blob('%s/%s.json' % (self.folderName, year))
+        blob.content_encoding = 'gzip'
+        blob.cache_control = 'no-cache'
         json_string = json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False)
-        blob.upload_from_string(json_string, content_type='application/json;charset=UTF-8')
+
+        #https://cloud.google.com/appengine/docs/standard/python3/using-temp-files
+        with gzip.open('/tmp/temp.json.gz', 'wt') as f:
+            f.write(json_string)
+
+        blob.upload_from_filename("/tmp/temp.json.gz", content_type='application/json;charset=UTF-8')

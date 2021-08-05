@@ -1,0 +1,5 @@
+lib/
+bin/
+temp.json.gz
+pyvenv.cfg
+__pycache__/

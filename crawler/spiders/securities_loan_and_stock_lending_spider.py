@@ -3,6 +3,7 @@
 # 融券 ＆＆借券賣出
 # http://www.twse.com.tw/zh/page/trading/exchange/TWT93U.html
 
+# scrapy crawl securities_loan_and_stock_lending -a start=20210730  -a end=20210730
 
 import scrapy
 from scrapy import signals, Spider
@@ -43,7 +44,6 @@ class CreditSpider(scrapy.Spider):
         self.today = datetime.date.today()
         self.url = 'http://www.twse.com.tw/exchangeReport/TWT93U'
         self.params = {
-            'response': 'csv',
             'date': '20190101'
         }
         self.startDate = getattr(self, 'start', self.getFormatDate(self.today))
@@ -93,21 +93,18 @@ class CreditSpider(scrapy.Spider):
 
     def parse(self, response, targetDateObj, params):
         queryDate = self.getQueryDate(targetDateObj['datetime'])
-        cr = csv.reader(response.text.splitlines(), delimiter=',')
-        my_list = list(cr)
+        data = json.loads(response.text)
+       
 
-        if len(my_list) < 200:
+        if len(data["data"]) == 0:
             print(queryDate, "no data")
             return
 
         print(queryDate)
 
-        for row in my_list:
+        for row in data["data"]:
             try:
-                if len(row) != 16:
-                    continue
-
-                code = re.sub('=|"', '', row[0])
+                code = row[0]
 
                 if code == '':
                     continue
@@ -149,7 +146,7 @@ class CreditSpider(scrapy.Spider):
         return spider
 
     def spider_closed(self, spider):
-        fileName = 'sl'
+        fileName = 'loan-and-lending'
         newData = dict()
         try:
             newData = self.dataStorage.getOldData(fileName)
