@@ -74,4 +74,6 @@ pyvenv.cfg
 
 package
 
+temp.json.gz
+
 .DS_Store
