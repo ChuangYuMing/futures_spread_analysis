@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import PropTypes from 'prop-types'
 import Highcharts from 'highcharts/highstock'
 import HighchartsReact from 'highcharts-react-official'
 import Api from '../../api/api'
 import { hightChartCommon } from '../../utils/hightChartOptionsFactory'
+import { zoomToAll } from '../../utils/chart'
 
-function WeightedIndex() {
-  const [data, setData] = useState(null)
+function WeightedIndex({ year }) {
+  const chartComponent = useRef(null)
+  const [options, setOptions] = useState(null)
 
   useEffect(() => {
-    Api.getWeightIndex('2021').then(res => {
+    Api.getWeightIndex(year).then(res => {
       const stockData = []
       for (const key in res) {
         const item = res[key]
@@ -22,19 +25,23 @@ function WeightedIndex() {
         stockData.push(obj)
       }
 
-      setData(stockData)
+      setOptions(hightChartCommon('', '價位', year, stockData))
+      zoomToAll(chartComponent.current.chart)
     })
-  }, [])
-
-  const options = hightChartCommon('加權指數', '價位', '2021', data)
+  }, [year])
 
   return (
     <HighchartsReact
+      ref={chartComponent}
       highcharts={Highcharts}
       constructorType="stockChart"
       options={options}
     />
   )
+}
+
+WeightedIndex.propTypes = {
+  year: PropTypes.string.isRequired
 }
 
 export default WeightedIndex
