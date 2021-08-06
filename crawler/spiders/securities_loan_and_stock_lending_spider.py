@@ -16,11 +16,8 @@ from copy import copy
 from dateutil.relativedelta import relativedelta
 import collections
 import json
-from bs4 import BeautifulSoup
 from random import randint
-import re
-import csv
-import traceback
+from zoneinfo import ZoneInfo
 
 # for cloud function call && scrapy crawl command call
 # softlink package folder to root
@@ -41,7 +38,7 @@ class CreditSpider(scrapy.Spider):
         
         self.dataStorage = Storage(self.name)
         self.data = collections.OrderedDict()
-        self.today = datetime.date.today()
+        self.today = datetime.datetime.now(ZoneInfo("Asia/Taipei"))
         self.url = 'http://www.twse.com.tw/exchangeReport/TWT93U'
         self.params = {
             'date': '20190101'
@@ -64,6 +61,7 @@ class CreditSpider(scrapy.Spider):
         return year + '/' + month+ '/' + day
 
     def start_requests(self):
+        print('start request - %s' % self.name)
         targetDateObj = copy(self.startObj)
         while(targetDateObj['datetime'] <= self.endObj['datetime']):
             self.params['date'] = self.getFormatDate(targetDateObj['datetime'])
@@ -135,8 +133,10 @@ class CreditSpider(scrapy.Spider):
                     }
                 else:
                     self.data[code]['credit_data'][queryDate] = credit_data
-            except:
-                traceback.print_exc()
+
+            except Exception as e:
+                print('error - %s' % self.name)
+                print(e)
                 continue
 
     @classmethod

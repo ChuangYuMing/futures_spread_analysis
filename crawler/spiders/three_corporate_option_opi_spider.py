@@ -18,6 +18,7 @@ import collections
 import json
 from bs4 import BeautifulSoup
 from random import randint
+from zoneinfo import ZoneInfo
 
 # for cloud function call && scrapy crawl command call
 # softlink package folder to root
@@ -38,7 +39,7 @@ class OptionOpiSpider(scrapy.Spider):
         
         self.dataStorage = Storage(self.name)
         self.data = collections.OrderedDict()
-        self.today = datetime.date.today()
+        self.today = datetime.datetime.now(ZoneInfo("Asia/Taipei"))
         self.url = 'https://www.taifex.com.tw/cht/3/callsAndPutsDate'
         self.params = {
             'queryType': '1',
@@ -66,6 +67,7 @@ class OptionOpiSpider(scrapy.Spider):
         return year + '/' + month+ '/' + day
 
     def start_requests(self):
+        print('start request - %s' % self.name)
         targetDateObj = copy(self.startObj)
         while(targetDateObj['datetime'] <= self.endObj['datetime']):
             self.params['queryDate'] = self.getQueryDate(targetDateObj['datetime'])
@@ -184,7 +186,7 @@ class OptionOpiSpider(scrapy.Spider):
             self.data[year][datestart]["is_settle"] = is_settle(datestart, "/")
             
         except Exception as e:
-            print('something error')
+            print('error - %s' % self.name)
             print(e)
 
 

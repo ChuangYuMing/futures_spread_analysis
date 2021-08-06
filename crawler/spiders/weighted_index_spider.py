@@ -14,6 +14,7 @@ from copy import copy
 from dateutil.relativedelta import relativedelta
 import collections
 import json
+from zoneinfo import ZoneInfo
 
 # for cloud function call && scrapy crawl command call
 # softlink package folder to root
@@ -34,7 +35,7 @@ class WeightedIndexSpider(scrapy.Spider):
         
         self.dataStorage = Storage(self.name)
         self.data = collections.OrderedDict()
-        self.today = datetime.date.today()
+        self.today = datetime.datetime.now(ZoneInfo("Asia/Taipei"))
         self.url = 'https://www.twse.com.tw/indicesReport/MI_5MINS_HIST'
         self.params = {
             'response': 'json',
@@ -72,6 +73,7 @@ class WeightedIndexSpider(scrapy.Spider):
         return year + '/' + month + '/' + day
 
     def start_requests(self):
+        print('start request - %s' % self.name)
         targetDateObj = copy(self.startObj)
         while(targetDateObj['datetime'] <= self.endObj['datetime']):
             self.params['date'] = self.getFormatDate(targetDateObj['datetime'])
