@@ -6,6 +6,9 @@ module.exports = {
   plugins: ['react', 'prettier'],
   extends: ['react-app', 'airbnb', 'prettier'],
   rules: {
+    'no-restricted-syntax': 'off',
+    'guard-for-in': 'off',
+    radix: ['error', 'as-needed'],
     'prettier/prettier': [
       'error',
       {
@@ -17,6 +20,7 @@ module.exports = {
       {
         extensions: ['.js', '.jsx']
       }
-    ]
+    ],
+    'react/no-this-in-sfc': ['off']
   }
 }

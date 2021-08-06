@@ -9,11 +9,11 @@ def cors_configuration(bucket_name):
     bucket = storage_client.get_bucket(bucket_name)
     bucket.cors = [
         {
-            "origin": ["*"],
+            "origin": ["http://localhost:3000"],
             "responseHeader": [
                 "Content-Type",
                 "x-goog-resumable"],
-            "method": ['PUT', 'POST'],
+            "method": ['GET','PUT', 'POST'],
             "maxAgeSeconds": 3600
         }
     ]
