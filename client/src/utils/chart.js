@@ -1,4 +1,7 @@
 export const zoomToAll = chart => {
+  if (!chart) {
+    return
+  }
   const series = chart.series[0]
   const xAxis = chart.xAxis[0]
   const newStart = series.xData[0]

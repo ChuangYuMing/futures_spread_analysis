@@ -9,5 +9,10 @@ export default {
     return ApiInstance.get(`weighted_index/${target}.json`).then(
       ({ data }) => data
     )
+  },
+  getOptionOpen(target) {
+    return ApiInstance.get(`three_corporate_option_opi/${target}.json`).then(
+      ({ data }) => data
+    )
   }
 }
