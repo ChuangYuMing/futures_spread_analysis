@@ -40,7 +40,6 @@ export const hightChartCommon = (
     valueSuffix: '',
     useHTML: true,
     formatter() {
-      console.log(this)
       handleHoverDate(this.points[0].point.date, `${year} ${subject}`)
 
       let html =
