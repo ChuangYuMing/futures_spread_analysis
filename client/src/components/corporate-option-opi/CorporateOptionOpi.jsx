@@ -2,14 +2,15 @@ import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import Highcharts from 'highcharts/highstock'
 import HighchartsReact from 'highcharts-react-official'
+import AnnotationsModule from 'highcharts/modules/annotations'
 import Api from '../../api/api'
 import { hightChartCommon } from '../../utils/hightChartOptionsFactory'
 import { zoomToAll } from '../../utils/chart'
 import ItemSelector from '../common/item-selector/ItemSelector'
 import './style.css'
 
+AnnotationsModule(Highcharts)
 function CorporateOptionOpi({ year }) {
-  const chartComponents = useRef([])
   const chartTypes = [
     {
       name: '外資 Buy Call 未平倉量',
@@ -125,8 +126,47 @@ function CorporateOptionOpi({ year }) {
     }
   ]
   const [chartOptions, setChartOptions] = useState([])
+  const chartComponents = useRef([])
   const [apiData, setApiData] = useState({})
-  const [selectedChartTypes, setChartType] = useState([])
+  const [selectedChartTypes, setChartType] = useState([
+    'f_long_amount',
+    'self_net_amount'
+  ])
+
+  function clearAll() {
+    setChartType([])
+  }
+
+  let keepHoverDate = ''
+  function handleHoverDate(date, chartTitle) {
+    chartComponents.current.forEach(chartComponent => {
+      const { chart } = chartComponent
+      chart.removeAnnotation(keepHoverDate)
+    })
+
+    chartComponents.current.forEach(chartComponent => {
+      const { chart } = chartComponent
+      if (chart.options.title.text !== chartTitle) {
+        const targetValue = chart.get(date).y
+        chart.addAnnotation({
+          id: date,
+          labelOptions: {
+            y: 15,
+            verticalAlign: 'bottom',
+            distance: 25
+          },
+          labels: [
+            {
+              point: date,
+              text: `${targetValue}`
+            }
+          ]
+        })
+      }
+    })
+
+    keepHoverDate = date
+  }
 
   useEffect(() => {
     Api.getOptionOpen(year).then(res => {
@@ -146,9 +186,11 @@ function CorporateOptionOpi({ year }) {
         obj.x = Date.parse(date)
         obj.date = date
         obj.is_settle = item.is_settle
+        obj.id = date
         stockData.push(obj)
       }
-      return hightChartCommon(name, '值', year, stockData)
+
+      return hightChartCommon(name, '值', year, stockData, handleHoverDate)
     }
     const options = selectedChartTypes.map(type => chartOptionFactory(type))
 
@@ -159,9 +201,6 @@ function CorporateOptionOpi({ year }) {
     })
   }, [selectedChartTypes, apiData])
 
-  const clearAll = () => {
-    setChartType([])
-  }
   return (
     <div className="option-open-wrapper">
       <div className="title-wrap">
@@ -182,10 +221,10 @@ function CorporateOptionOpi({ year }) {
         selectedChartTypes={selectedChartTypes}
         splitItem="self_buy_call"
       />
-      {chartOptions.map(option => (
+      {chartOptions.map((option, index) => (
         <HighchartsReact
           key={option.title.text}
-          ref={element => chartComponents.current.push(element)}
+          ref={element => (chartComponents.current[index] = element)}
           highcharts={Highcharts}
           constructorType="stockChart"
           options={option}

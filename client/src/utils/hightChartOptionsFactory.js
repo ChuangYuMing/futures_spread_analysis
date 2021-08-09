@@ -1,4 +1,10 @@
-export const hightChartCommon = (subject, yName, year, data) => ({
+export const hightChartCommon = (
+  subject,
+  yName,
+  year,
+  data,
+  handleHoverDate = () => {}
+) => ({
   title: {
     text: `${year} ${subject}`,
     x: -20 // center
@@ -34,6 +40,9 @@ export const hightChartCommon = (subject, yName, year, data) => ({
     valueSuffix: '',
     useHTML: true,
     formatter() {
+      console.log(this)
+      handleHoverDate(this.points[0].point.date, `${year} ${subject}`)
+
       let html =
         `<span>日期：<span>${this.points[0].point.date}<br>` +
         `<span>${yName}: <span>${this.points[0].point.y}<br>`
