@@ -7,6 +7,10 @@ function Navigation() {
     {
       text: '選擇權未平倉',
       route: 'option-open-interest'
+    },
+    {
+      text: '期貨未平倉',
+      route: 'futures-open-interest'
     }
   ]
   return (

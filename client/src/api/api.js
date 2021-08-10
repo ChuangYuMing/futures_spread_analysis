@@ -14,5 +14,10 @@ export default {
     return ApiInstance.get(`three_corporate_option_opi/${target}.json`).then(
       ({ data }) => data
     )
+  },
+  getFuturesOpen(target) {
+    return ApiInstance.get(`three_corporate_open_interest/${target}.json`).then(
+      ({ data }) => data
+    )
   }
 }

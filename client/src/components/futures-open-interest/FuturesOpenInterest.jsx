@@ -11,119 +11,55 @@ import ItemSelector from '../common/item-selector/ItemSelector'
 import './style.css'
 
 AnnotationsModule(Highcharts)
-function CorporateOptionOpi({ year }) {
+function FuturesOpenInterest({ year }) {
   const chartTypes = [
     {
-      name: '外資 Buy Call 未平倉量',
-      targetValue: 'f_buy_call'
-    },
-    {
-      name: '外資 Buy Call 未平倉金額',
-      targetValue: 'f_buy_call_amount'
-    },
-    {
-      name: '外資 Buy Put 未平倉量',
-      targetValue: 'f_buy_put'
-    },
-    {
-      name: '外資 Buy Put 未平倉金額',
-      targetValue: 'f_buy_put_amount'
-    },
-    {
-      name: '外資 Sell Call 未平倉量',
-      targetValue: 'f_sell_call'
-    },
-    {
-      name: '外資 Sell Call 未平倉金額',
-      targetValue: 'f_sell_call_amount'
-    },
-    {
-      name: '外資 Sell Put 未平倉量',
-      targetValue: 'f_sell_put'
-    },
-    {
-      name: '外資 Sell Put 未平倉金額',
-      targetValue: 'f_sell_put_amount'
-    },
-    {
       name: '外資多方口數',
-      targetValue: 'f_long'
+      targetValue: 'bull_foreign'
     },
     {
-      name: '外資多方契約金額',
-      targetValue: 'f_long_amount'
+      name: '外資多方金額',
+      targetValue: 'bull_foreign_amount'
     },
     {
       name: '外資空方口數',
-      targetValue: 'f_short'
+      targetValue: 'bear_foreign'
     },
     {
-      name: '外資空方契約金額',
-      targetValue: 'f_short_amount'
+      name: '外資空方金額',
+      targetValue: 'bear_foreign_amount'
     },
     {
       name: '外資多空淨額口數',
-      targetValue: 'f_net'
+      targetValue: 'diff_foreign'
     },
     {
-      name: '外資多空淨額契約金額',
-      targetValue: 'f_net_amount'
-    },
-    {
-      name: '自營 Buy Call 未平倉量',
-      targetValue: 'self_buy_call'
-    },
-    {
-      name: '自營 Buy Call 未平倉金額',
-      targetValue: 'self_buy_call_amount'
-    },
-    {
-      name: '自營 Buy Put 未平倉量',
-      targetValue: 'self_buy_put'
-    },
-    {
-      name: '自營 Buy Put 未平倉金額',
-      targetValue: 'self_buy_put_amount'
-    },
-    {
-      name: '自營 Sell Call 未平倉量',
-      targetValue: 'self_sell_call'
-    },
-    {
-      name: '自營 Sell Call 未平倉金額',
-      targetValue: 'self_sell_call_amount'
-    },
-    {
-      name: '自營 Sell Put 未平倉量',
-      targetValue: 'self_sell_put'
-    },
-    {
-      name: '自營 Sell Put 未平倉金額',
-      targetValue: 'self_sell_put_amount'
+      name: '外資多空淨額金額',
+      targetValue: 'diff_foreign_amount'
     },
     {
       name: '自營多方口數',
-      targetValue: 'self_long'
+      targetValue: 'bull_self'
     },
     {
-      name: '自營多方契約金額',
-      targetValue: 'self_long_amount'
+      name: '自營多方金額',
+      targetValue: 'bull_self_amount'
     },
     {
       name: '自營空方口數',
-      targetValue: 'self_short'
+      targetValue: 'bear_self'
     },
     {
-      name: '自營空方契約金額',
-      targetValue: 'self_short_amount'
+      name: '自營空方金額',
+      targetValue: 'bear_self_amount'
     },
     {
       name: '自營多空淨額口數',
-      targetValue: 'self_net'
+      targetValue: 'diff_self'
     },
     {
-      name: '自營多空淨額契約金額',
-      targetValue: 'self_net_amount'
+      name: '自營多空淨額金額',
+      targetValue: 'diff_self_amount'
     }
   ]
   const [chartOptions, setChartOptions] = useState([])
@@ -172,7 +108,7 @@ function CorporateOptionOpi({ year }) {
   const debounceHandleHoverDate = debounce(handleHoverDate, 100)
 
   useEffect(() => {
-    Api.getOptionOpen(year).then(res => {
+    Api.getFuturesOpen(year).then(res => {
       setApiData(res)
     })
   }, [year])
@@ -213,7 +149,7 @@ function CorporateOptionOpi({ year }) {
   return (
     <div className="option-open-wrapper">
       <div className="title-wrap">
-        <span className="title">選擇權未平倉</span>
+        <span className="title">期貨未平倉</span>
         <span
           className="clear-action"
           onClick={clearAll}
@@ -228,7 +164,7 @@ function CorporateOptionOpi({ year }) {
         itemMap={chartTypes}
         handler={setChartType}
         selectedChartTypes={selectedChartTypes}
-        splitItem="self_buy_call"
+        splitItem="bull_self"
       />
       {chartOptions.map((option, index) => (
         <HighchartsReact
@@ -243,8 +179,8 @@ function CorporateOptionOpi({ year }) {
   )
 }
 
-CorporateOptionOpi.propTypes = {
+FuturesOpenInterest.propTypes = {
   year: PropTypes.string.isRequired
 }
 
-export default CorporateOptionOpi
+export default FuturesOpenInterest

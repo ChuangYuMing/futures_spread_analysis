@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import WeightedIndex from '../components/weighted-index/WeightedIndex'
 import YearSelector from '../components/common/year-selector/YearSelector'
-import CorporateOptionOpi from '../components/corporate-option-opi/CorporateOptionOpi'
+import OptionOpenInterest from '../components/option-open-interest/OptionOpenInterest'
 
-function OptionOpenInterest() {
+function OptionOpenInterestVIew() {
   const defaultYear = new Date().getFullYear()
   const [year, setYear] = useState(String(defaultYear))
 
@@ -11,9 +11,9 @@ function OptionOpenInterest() {
     <div className="option-open-interest">
       <YearSelector defaultYear={defaultYear} year={year} handler={setYear} />
       <WeightedIndex year={year} />
-      <CorporateOptionOpi year={year} />
+      <OptionOpenInterest year={year} />
     </div>
   )
 }
 
-export default OptionOpenInterest
+export default OptionOpenInterestVIew

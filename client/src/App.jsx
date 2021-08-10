@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import OptionOpenInterest from './view/OptionOpenInterest'
+import OptionOpenInterestVIew from './view/OptionOpenInterestVIew'
+import FuturesOpenInterestView from './view/FuturesOpenInterestView'
 import Navigation from './components/navigation/Navigation'
 
 function App() {
@@ -10,14 +11,16 @@ function App() {
         <Navigation />
         <Switch>
           <Route path="/option-open-interest">
-            <OptionOpenInterest />
+            <OptionOpenInterestVIew />
+          </Route>
+          <Route path="/futures-open-interest">
+            <FuturesOpenInterestView />
           </Route>
           <Route path="/">
-            <OptionOpenInterest />
+            <OptionOpenInterestVIew />
           </Route>
         </Switch>
       </Router>
-      <OptionOpenInterest />
     </div>
   )
 }
