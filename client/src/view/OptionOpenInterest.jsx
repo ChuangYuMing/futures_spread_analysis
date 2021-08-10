@@ -3,12 +3,12 @@ import WeightedIndex from '../components/weighted-index/WeightedIndex'
 import YearSelector from '../components/common/year-selector/YearSelector'
 import CorporateOptionOpi from '../components/corporate-option-opi/CorporateOptionOpi'
 
-function Main() {
+function OptionOpenInterest() {
   const defaultYear = new Date().getFullYear()
   const [year, setYear] = useState(String(defaultYear))
 
   return (
-    <div className="main">
+    <div className="option-open-interest">
       <YearSelector defaultYear={defaultYear} year={year} handler={setYear} />
       <WeightedIndex year={year} />
       <CorporateOptionOpi year={year} />
@@ -16,4 +16,4 @@ function Main() {
   )
 }
 
-export default Main
+export default OptionOpenInterest
