@@ -6,6 +6,7 @@ import AnnotationsModule from 'highcharts/modules/annotations'
 import Api from '../../api/api'
 import { hightChartCommon } from '../../utils/hightChartOptionsFactory'
 import { zoomToAll } from '../../utils/chart'
+import debounce from '../../utils/index'
 import ItemSelector from '../common/item-selector/ItemSelector'
 import './style.css'
 
@@ -139,12 +140,15 @@ function CorporateOptionOpi({ year }) {
 
   let keepHoverDate = ''
   function handleHoverDate(date, chartTitle) {
-    chartComponents.current.forEach(chartComponent => {
+    const charts = chartComponents.current.filter(
+      chartComponent => chartComponent
+    )
+    charts.forEach(chartComponent => {
       const { chart } = chartComponent
       chart.removeAnnotation(keepHoverDate)
     })
 
-    chartComponents.current.forEach(chartComponent => {
+    charts.forEach(chartComponent => {
       const { chart } = chartComponent
       if (chart.options.title.text !== chartTitle) {
         const targetValue = chart.get(date).y
@@ -168,6 +172,8 @@ function CorporateOptionOpi({ year }) {
     keepHoverDate = date
   }
 
+  const debounceHandleHoverDate = debounce(handleHoverDate, 100)
+
   useEffect(() => {
     Api.getOptionOpen(year).then(res => {
       setApiData(res)
@@ -190,7 +196,13 @@ function CorporateOptionOpi({ year }) {
         stockData.push(obj)
       }
 
-      return hightChartCommon(name, '值', year, stockData, handleHoverDate)
+      return hightChartCommon(
+        name,
+        '值',
+        year,
+        stockData,
+        debounceHandleHoverDate
+      )
     }
     const options = selectedChartTypes.map(type => chartOptionFactory(type))
 
