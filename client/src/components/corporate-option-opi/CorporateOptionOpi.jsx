@@ -129,10 +129,7 @@ function CorporateOptionOpi({ year }) {
   const [chartOptions, setChartOptions] = useState([])
   const chartComponents = useRef([])
   const [apiData, setApiData] = useState({})
-  const [selectedChartTypes, setChartType] = useState([
-    'f_long_amount',
-    'self_net_amount'
-  ])
+  const [selectedChartTypes, setChartType] = useState([])
 
   function clearAll() {
     setChartType([])
