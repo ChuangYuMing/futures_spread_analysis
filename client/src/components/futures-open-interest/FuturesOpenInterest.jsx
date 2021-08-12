@@ -25,6 +25,14 @@ function FuturesOpenInterest({ year }) {
     {
       name: '空方金額',
       targetValue: ['bear_foreign_amount', 'bear_self_amount']
+    },
+    {
+      name: '多空淨額口數',
+      targetValue: ['diff_foreign', 'diff_self']
+    },
+    {
+      name: '多空淨額金額',
+      targetValue: ['diff_foreign_amount', 'diff_self_amount']
     }
   ]
   const [chartOptions, setChartOptions] = useState([])
