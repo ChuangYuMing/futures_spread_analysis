@@ -84,21 +84,25 @@ function FuturesOpenInterest({ year }) {
       const seriesTypes = [
         {
           name: '外資',
-          targetPropertyCheck: 'foreign'
+          targetPropertyCheck: 'foreign',
+          color: '#054099'
         },
         {
           name: '自營',
-          targetPropertyCheck: 'self'
+          targetPropertyCheck: 'self',
+          color: '#a86206'
         },
         {
           name: '總和',
-          targetPropertyCheck: 'total'
+          targetPropertyCheck: 'total',
+          color: '#207506'
         }
       ]
 
       const series = seriesTypes.map(seriesType => ({
         name: seriesType.name,
-        data: seriesDataFactory(seriesType.targetPropertyCheck, targetValue)
+        data: seriesDataFactory(seriesType.targetPropertyCheck, targetValue),
+        color: seriesType.color
       }))
 
       return hightChartMultiple(name, '值', year, series)
