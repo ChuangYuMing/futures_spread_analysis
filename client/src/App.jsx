@@ -5,6 +5,7 @@ import FuturesOpenInterestView from './view/FuturesOpenInterestView'
 import Navigation from './components/navigation/Navigation'
 import './App.css'
 
+console.log('test github action')
 function App() {
   return (
     <div className="App">
