@@ -9,23 +9,23 @@ function ItemSelector({
   splitItem = ''
 }) {
   const handleChange = event => {
-    const targetValue = event.target.dataset.value
+    const name = event.target.dataset.value
     const newTypes = [...selectedChartTypes]
-    const hasSelected = selectedChartTypes.includes(targetValue)
+    const hasSelected = selectedChartTypes.includes(name)
 
     if (hasSelected) {
-      newTypes.splice(selectedChartTypes.indexOf(targetValue), 1)
+      newTypes.splice(selectedChartTypes.indexOf(name), 1)
     } else {
-      newTypes.push(targetValue)
+      newTypes.push(name)
     }
 
     const sortTypes = itemMap
-      .map(item => item.targetValue)
+      .map(item => item.name)
       .filter(item => newTypes.includes(item))
     handler(sortTypes)
   }
 
-  let splitItemIndex = itemMap.findIndex(item => item.targetValue === splitItem)
+  let splitItemIndex = itemMap.findIndex(item => item.name === splitItem)
   splitItemIndex = splitItemIndex === -1 ? itemMap.length : splitItemIndex
 
   const itemGroupOne = itemMap.slice(0, splitItemIndex)
@@ -33,12 +33,12 @@ function ItemSelector({
 
   const itemFactory = (item, index) => (
     <span
-      key={item.targetValue}
+      key={item.name}
       tabIndex={index}
       className={`item ${
-        selectedChartTypes.includes(item.targetValue) ? 'active' : ''
+        selectedChartTypes.includes(item.name) ? 'active' : ''
       } `}
-      data-value={item.targetValue}
+      data-value={item.name}
       onClick={handleChange}
       onKeyDown={handleChange}
       role="button"

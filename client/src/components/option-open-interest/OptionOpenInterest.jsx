@@ -148,7 +148,7 @@ function OptionOpenInterest({ year }) {
     charts.forEach(chartComponent => {
       const { chart } = chartComponent
       if (chart.options.title.text !== chartTitle) {
-        const targetValue = chart.get(date).y
+        const value = chart.get(date).y
         chart.addAnnotation({
           id: date,
           labelOptions: {
@@ -159,7 +159,7 @@ function OptionOpenInterest({ year }) {
           labels: [
             {
               point: date,
-              text: `${targetValue}`
+              text: `${value}`
             }
           ]
         })
@@ -179,13 +179,15 @@ function OptionOpenInterest({ year }) {
 
   useEffect(() => {
     function chartOptionFactory(type) {
-      const { name } = chartTypes.filter(item => item.targetValue === type)[0]
+      const { name, targetValue } = chartTypes.filter(
+        item => item.name === type
+      )[0]
       const stockData = []
 
       for (const date in apiData) {
         const item = apiData[date]
         const obj = {}
-        obj.y = parseInt(item[type])
+        obj.y = parseInt(item[targetValue])
         obj.x = Date.parse(date)
         obj.date = date
         obj.is_settle = item.is_settle
@@ -228,7 +230,7 @@ function OptionOpenInterest({ year }) {
         itemMap={chartTypes}
         handler={setChartType}
         selectedChartTypes={selectedChartTypes}
-        splitItem="self_buy_call"
+        splitItem="自營 Buy Call 未平倉量"
       />
       {chartOptions.map((option, index) => (
         <HighchartsReact
