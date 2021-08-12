@@ -65,7 +65,7 @@ function ItemSelector({
 ItemSelector.propTypes = {
   itemMap: PropTypes.arrayOf(
     PropTypes.shape({
-      targetValue: PropTypes.string,
+      targetValue: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
       name: PropTypes.string
     })
   ).isRequired,

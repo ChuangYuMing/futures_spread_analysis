@@ -2,64 +2,29 @@ import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import Highcharts from 'highcharts/highstock'
 import HighchartsReact from 'highcharts-react-official'
-import AnnotationsModule from 'highcharts/modules/annotations'
 import Api from '../../api/api'
-import { hightChartCommon } from '../../utils/hightChartOptionsFactory'
+import { hightChartMultiple } from '../../utils/hightChartOptionsFactory'
 import { zoomToAll } from '../../utils/chart'
-import debounce from '../../utils/index'
 import ItemSelector from '../common/item-selector/ItemSelector'
 import './style.css'
 
-AnnotationsModule(Highcharts)
 function FuturesOpenInterest({ year }) {
   const chartTypes = [
     {
-      name: '外資多方口數',
-      targetValue: 'bull_foreign'
+      name: '多方口數',
+      targetValue: ['bull_foreign', 'bull_self']
     },
     {
-      name: '外資多方金額',
-      targetValue: 'bull_foreign_amount'
+      name: '多方金額',
+      targetValue: ['bull_foreign_amount', 'bull_self_amount']
     },
     {
-      name: '外資空方口數',
-      targetValue: 'bear_foreign'
+      name: '空方口數',
+      targetValue: ['bear_foreign', 'bear_self']
     },
     {
-      name: '外資空方金額',
-      targetValue: 'bear_foreign_amount'
-    },
-    {
-      name: '外資多空淨額口數',
-      targetValue: 'diff_foreign'
-    },
-    {
-      name: '外資多空淨額金額',
-      targetValue: 'diff_foreign_amount'
-    },
-    {
-      name: '自營多方口數',
-      targetValue: 'bull_self'
-    },
-    {
-      name: '自營多方金額',
-      targetValue: 'bull_self_amount'
-    },
-    {
-      name: '自營空方口數',
-      targetValue: 'bear_self'
-    },
-    {
-      name: '自營空方金額',
-      targetValue: 'bear_self_amount'
-    },
-    {
-      name: '自營多空淨額口數',
-      targetValue: 'diff_self'
-    },
-    {
-      name: '自營多空淨額金額',
-      targetValue: 'diff_self_amount'
+      name: '空方金額',
+      targetValue: ['bear_foreign_amount', 'bear_self_amount']
     }
   ]
   const [chartOptions, setChartOptions] = useState([])
@@ -71,42 +36,6 @@ function FuturesOpenInterest({ year }) {
     setChartType([])
   }
 
-  let keepHoverDate = ''
-  function handleHoverDate(date, chartTitle) {
-    const charts = chartComponents.current.filter(
-      chartComponent => chartComponent
-    )
-    charts.forEach(chartComponent => {
-      const { chart } = chartComponent
-      chart.removeAnnotation(keepHoverDate)
-    })
-
-    charts.forEach(chartComponent => {
-      const { chart } = chartComponent
-      if (chart.options.title.text !== chartTitle) {
-        const targetValue = chart.get(date).y
-        chart.addAnnotation({
-          id: date,
-          labelOptions: {
-            y: 15,
-            verticalAlign: 'bottom',
-            distance: 25
-          },
-          labels: [
-            {
-              point: date,
-              text: `${targetValue}`
-            }
-          ]
-        })
-      }
-    })
-
-    keepHoverDate = date
-  }
-
-  const debounceHandleHoverDate = debounce(handleHoverDate, 100)
-
   useEffect(() => {
     Api.getFuturesOpen(year).then(res => {
       setApiData(res)
@@ -114,14 +43,22 @@ function FuturesOpenInterest({ year }) {
   }, [year])
 
   useEffect(() => {
-    function chartOptionFactory(type) {
-      const { name } = chartTypes.filter(item => item.targetValue === type)[0]
+    function seriesDataFactory(targetPropertyCheck, targetValue) {
       const stockData = []
+      const targetProperty = targetValue.filter(item =>
+        item.includes(targetPropertyCheck)
+      )[0]
 
       for (const date in apiData) {
         const item = apiData[date]
         const obj = {}
-        obj.y = parseInt(item[type])
+        let yValue = parseInt(item[targetProperty])
+
+        if (targetPropertyCheck === 'total') {
+          yValue =
+            parseInt(item[targetValue[0]]) + parseInt(item[targetValue[1]])
+        }
+        obj.y = yValue
         obj.x = Date.parse(date)
         obj.date = date
         obj.is_settle = item.is_settle
@@ -129,13 +66,34 @@ function FuturesOpenInterest({ year }) {
         stockData.push(obj)
       }
 
-      return hightChartCommon(
-        name,
-        '值',
-        year,
-        stockData,
-        debounceHandleHoverDate
-      )
+      return stockData
+    }
+
+    function chartOptionFactory(type) {
+      const { name, targetValue } = chartTypes.filter(
+        item => item.name === type
+      )[0]
+      const seriesTypes = [
+        {
+          name: '外資',
+          targetPropertyCheck: 'foreign'
+        },
+        {
+          name: '自營',
+          targetPropertyCheck: 'self'
+        },
+        {
+          name: '總和',
+          targetPropertyCheck: 'total'
+        }
+      ]
+
+      const series = seriesTypes.map(seriesType => ({
+        name: seriesType.name,
+        data: seriesDataFactory(seriesType.targetPropertyCheck, targetValue)
+      }))
+
+      return hightChartMultiple(name, '值', year, series)
     }
     const options = selectedChartTypes.map(type => chartOptionFactory(type))
 
@@ -164,7 +122,6 @@ function FuturesOpenInterest({ year }) {
         itemMap={chartTypes}
         handler={setChartType}
         selectedChartTypes={selectedChartTypes}
-        splitItem="bull_self"
       />
       {chartOptions.map((option, index) => (
         <HighchartsReact

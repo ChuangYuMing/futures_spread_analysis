@@ -103,13 +103,12 @@ export const hightChartMultiple = (subject, yName, year, series) => ({
   tooltip: {
     valueSuffix: '',
     formatter() {
-      console.log(this)
-      let html =
-        `<span>日期：</span>${this.points[0].point.date}<br>` +
-        `<span style="color:${this.points[0].color}">${this.points[0].point.series.name}</span>: <b>${this.points[0].y}</b><br>` +
-        `<span style="color:${this.points[1].color}">${this.points[1].point.series.name}</span>: <b>${this.points[1].y}</b><br>` +
-        `<span style="color:${this.points[2].color}">${this.points[2].point.series.name}</span>: <b>${this.points[2].y}</b><br>` +
-        `<span style="color:${this.points[3].color}">${this.points[3].point.series.name}</span>: <b>${this.points[3].y}</b>`
+      const labels = this.points.reduce(
+        (acc, cur) =>
+          `${acc}<span style="color:${cur.color}">${cur.point.series.name}</span>: <b>${cur.y}</b><br>`,
+        ''
+      )
+      let html = `<span>日期：</span>${this.points[0].point.date}<br>${labels}`
 
       if (this.points[0].point.is_settle === true) {
         html += '<span style="color: red">結算日<span>'

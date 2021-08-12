@@ -3,23 +3,26 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import OptionOpenInterestVIew from './view/OptionOpenInterestVIew'
 import FuturesOpenInterestView from './view/FuturesOpenInterestView'
 import Navigation from './components/navigation/Navigation'
+import './App.css'
 
 function App() {
   return (
     <div className="App">
       <Router>
         <Navigation />
-        <Switch>
-          <Route path="/option-open-interest">
-            <OptionOpenInterestVIew />
-          </Route>
-          <Route path="/futures-open-interest">
-            <FuturesOpenInterestView />
-          </Route>
-          <Route path="/">
-            <OptionOpenInterestVIew />
-          </Route>
-        </Switch>
+        <div className="main">
+          <Switch>
+            <Route path="/option-open-interest">
+              <OptionOpenInterestVIew />
+            </Route>
+            <Route path="/futures-open-interest">
+              <FuturesOpenInterestView />
+            </Route>
+            <Route path="/">
+              <OptionOpenInterestVIew />
+            </Route>
+          </Switch>
+        </div>
       </Router>
     </div>
   )
