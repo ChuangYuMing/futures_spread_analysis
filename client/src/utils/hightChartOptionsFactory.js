@@ -1,3 +1,5 @@
+import { toThousands } from './index'
+
 export const hightChartCommon = (
   subject,
   yName,
@@ -44,7 +46,7 @@ export const hightChartCommon = (
 
       let html =
         `<span>日期：<span>${this.points[0].point.date}<br>` +
-        `<span>${yName}: <span>${this.points[0].point.y}<br>`
+        `<span>${yName}: <span>${toThousands(this.points[0].point.y)}<br>`
 
       if (this.points[0].point.is_settle === true) {
         html += '<span style="color: red">結算日<span>'
@@ -105,7 +107,9 @@ export const hightChartMultiple = (subject, yName, year, series) => ({
     formatter() {
       const labels = this.points.reduce(
         (acc, cur) =>
-          `${acc}<span style="color:${cur.color}">${cur.point.series.name}</span>: <b>${cur.y}</b><br>`,
+          `${acc}<span style="color:${cur.color}">${
+            cur.point.series.name
+          }</span>: <b>${toThousands(cur.y)}</b><br>`,
         ''
       )
       let html = `<span>日期：</span>${this.points[0].point.date}<br>${labels}`

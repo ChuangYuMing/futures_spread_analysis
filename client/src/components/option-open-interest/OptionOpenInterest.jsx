@@ -6,7 +6,7 @@ import AnnotationsModule from 'highcharts/modules/annotations'
 import Api from '../../api/api'
 import { hightChartCommon } from '../../utils/hightChartOptionsFactory'
 import { zoomToAll } from '../../utils/chart'
-import debounce from '../../utils/index'
+import { debounce, toThousands } from '../../utils/index'
 import ItemSelector from '../common/item-selector/ItemSelector'
 import './style.css'
 
@@ -159,7 +159,7 @@ function OptionOpenInterest({ year }) {
           labels: [
             {
               point: date,
-              text: `${value}`
+              text: `${toThousands(value)}`
             }
           ]
         })
