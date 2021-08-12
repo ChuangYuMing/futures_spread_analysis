@@ -34,7 +34,7 @@ jobs:
       - run: yarn install --frozen-lockfile
         working-directory: ./client
 
-      - run: yarn build
+      - run: CI=false yarn build
         working-directory: ./client
 
       - name: Deploy
