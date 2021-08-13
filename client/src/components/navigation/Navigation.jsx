@@ -11,6 +11,10 @@ function Navigation() {
     {
       text: '期貨未平倉',
       route: 'futures-open-interest'
+    },
+    {
+      text: '期貨大額交易人未沖銷',
+      route: 'futures-big-open-interest'
     }
   ]
   return (

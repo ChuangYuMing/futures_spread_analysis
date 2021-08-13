@@ -26,7 +26,7 @@ function WeightedIndex({ year }) {
       }
 
       setOptions(hightChartCommon('加權指數', '價位', year, stockData))
-      zoomToAll(chartComponent.current.chart)
+      zoomToAll(chartComponent?.current?.chart)
     })
   }, [year])
 

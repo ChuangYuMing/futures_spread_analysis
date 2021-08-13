@@ -1,5 +1,5 @@
 export const zoomToAll = chart => {
-  if (!chart) {
+  if (!chart || !chart?.series || !chart?.series[0]) {
     return
   }
   const series = chart.series[0]

@@ -19,5 +19,10 @@ export default {
     return ApiInstance.get(`three_corporate_open_interest/${target}.json`).then(
       ({ data }) => data
     )
+  },
+  getFuturesBigOpen(target) {
+    return ApiInstance.get(`tx_open_interest/${target}.json`).then(
+      ({ data }) => data
+    )
   }
 }

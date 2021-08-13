@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import OptionOpenInterestVIew from './view/OptionOpenInterestVIew'
 import FuturesOpenInterestView from './view/FuturesOpenInterestView'
+import FuturesBigOpenInterestView from './view/FuturesBigOpenInterestView'
 import Navigation from './components/navigation/Navigation'
 import './App.css'
 
@@ -17,6 +18,9 @@ function App() {
             </Route>
             <Route path="/futures-open-interest">
               <FuturesOpenInterestView />
+            </Route>
+            <Route path="/futures-big-open-interest">
+              <FuturesBigOpenInterestView />
             </Route>
             <Route path="/">
               <OptionOpenInterestVIew />
