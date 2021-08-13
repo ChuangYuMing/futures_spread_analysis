@@ -60,7 +60,7 @@ soupsieve==2.2.1
 toml==0.10.1
 Twisted==20.3.0
 uritemplate==3.0.1
-urllib3==1.26.5
+urllib3==1.25.9
 virtualenv==15.1.0
 virtualenv-clone==0.2.6
 w3lib==1.22.0
