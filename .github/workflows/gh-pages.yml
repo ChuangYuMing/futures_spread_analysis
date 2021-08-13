@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master
+    paths:
+      - ".github/workflows/gh-pages.yml"
+      - "client/**"
   pull_request:
 
 jobs:
@@ -11,6 +14,9 @@ jobs:
     runs-on: ubuntu-20.04
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
+    defaults:
+      run:
+        working-directory: client
     steps:
       - uses: actions/checkout@v2
 
@@ -32,11 +38,12 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - run: yarn install --frozen-lockfile
-        working-directory: ./client
 
       - run: CI=false yarn build
-        working-directory: ./client
 
       - name: Deploy
-        run: ./node_modules/.bin/gh-pages -d build
-        working-directory: ./client
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/master' }}
+        with:
+          personal_token: ${{ secrets.GHPAGESDEPLOYACTION }}
+          publish_dir: ./client/build
