@@ -24,5 +24,10 @@ export default {
     return ApiInstance.get(`tx_open_interest/${target}.json`).then(
       ({ data }) => data
     )
+  },
+  getLoanAndLending() {
+    return ApiInstance.get(
+      `securities_loan_and_stock_lending/loan-and-lending.json`
+    ).then(({ data }) => data)
   }
 }

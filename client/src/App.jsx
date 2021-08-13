@@ -4,6 +4,8 @@ import OptionOpenInterestVIew from './view/OptionOpenInterestVIew'
 import FuturesOpenInterestView from './view/FuturesOpenInterestView'
 import FuturesBigOpenInterestView from './view/FuturesBigOpenInterestView'
 import Navigation from './components/navigation/Navigation'
+import LoanAndLendingAnalysis from './components/loan-and-lending-analysis/LoanAndLendingAnalysis'
+
 import './App.css'
 
 function App() {
@@ -21,6 +23,9 @@ function App() {
             </Route>
             <Route path="/futures-big-open-interest">
               <FuturesBigOpenInterestView />
+            </Route>
+            <Route path="/loan-and-lending-analysis">
+              <LoanAndLendingAnalysis />
             </Route>
             <Route path="/">
               <OptionOpenInterestVIew />

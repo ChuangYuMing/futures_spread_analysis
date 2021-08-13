@@ -15,6 +15,10 @@ function Navigation() {
     {
       text: '期貨大額交易人未沖銷',
       route: 'futures-big-open-interest'
+    },
+    {
+      text: '融券(借券賣出)分析',
+      route: 'loan-and-lending-analysis'
     }
   ]
   return (

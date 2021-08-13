@@ -6,6 +6,7 @@ module.exports = {
   plugins: ['react', 'prettier'],
   extends: ['react-app', 'airbnb', 'prettier'],
   rules: {
+    'react-hooks/exhaustive-deps': 'off',
     'no-return-assign': 'off',
     'no-restricted-syntax': 'off',
     'guard-for-in': 'off',
