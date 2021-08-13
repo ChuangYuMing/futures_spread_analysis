@@ -42,6 +42,10 @@ jobs:
         working-directory: ./client
 
       - run: |
+          chmod -R 777 ./build
+        working-directory: ./client
+
+      - run: |
           pwd
         working-directory: ./client
 
