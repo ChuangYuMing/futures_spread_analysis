@@ -38,5 +38,5 @@ jobs:
         working-directory: ./client
 
       - name: Deploy
-        run: gh-pages -d build
+        run: ./node_modules/.bin/gh-pages -d build
         working-directory: ./client
