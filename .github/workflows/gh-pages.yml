@@ -37,8 +37,16 @@ jobs:
       - run: CI=false yarn build
         working-directory: ./client
 
+      - run: |
+          ls -la
+        working-directory: ./client
+
+      - run: |
+          pwd
+        working-directory: ./client
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.GHPAGESDEPLOYACTION }}
-          publish_dir: ./client/build
+          publish_dir: ../client/build
