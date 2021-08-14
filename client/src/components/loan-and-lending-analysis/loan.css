@@ -46,9 +46,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  margin-top: 40px;
-  padding: 20px;
-  border: solid 1px rgb(97, 97, 97);
+  margin-top: 20px;
   border-radius: 8px;
 }
 

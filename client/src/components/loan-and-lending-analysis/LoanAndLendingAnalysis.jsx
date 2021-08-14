@@ -116,7 +116,7 @@ function LoanAndLendingAnalysis() {
           </span>
         ))}
       </div>
-      <div className={`stock-info" ${stockInfo ? '' : 'hidden'}`}>
+      <div className={`stock-info ${stockInfo ? '' : 'hidden'}`}>
         <table className="info-table">
           <thead>
             <tr role="row">
