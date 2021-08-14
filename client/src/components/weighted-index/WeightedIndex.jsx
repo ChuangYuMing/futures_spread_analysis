@@ -8,7 +8,7 @@ import { zoomToAll } from '../../utils/chart'
 
 function WeightedIndex({ year }) {
   const chartComponent = useRef(null)
-  const [options, setOptions] = useState(null)
+  const [options, setOptions] = useState({})
 
   useEffect(() => {
     Api.getWeightIndex(year).then(res => {
