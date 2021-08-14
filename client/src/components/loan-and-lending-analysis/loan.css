@@ -17,3 +17,61 @@
   padding: 4px 8px;
   border-radius: 4px;
 }
+
+.res-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-top: 40px;
+  padding: 20px;
+  border: solid 1px rgb(97, 97, 97);
+  border-radius: 8px;
+}
+
+.res-wrap span {
+  display: inline-block;
+  padding: 4px 8px;
+  border: solid 1px rgb(223, 165, 57);
+  cursor: pointer;
+  margin-right: 8px;
+  border-radius: 4px;
+}
+
+.res-wrap span.active {
+  background-color: rgb(223, 165, 57);
+  color: rgb(49, 48, 48);
+}
+
+.stock-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-top: 40px;
+  padding: 20px;
+  border: solid 1px rgb(97, 97, 97);
+  border-radius: 8px;
+}
+
+.info-table,
+td,
+th {
+  border: 1px solid #333;
+}
+
+.info-table {
+  border-collapse: collapse;
+}
+
+.info-table td {
+  text-align: right;
+}
+
+.info-table,
+td,
+th {
+  padding: 4px 8px;
+}
+
+.hidden {
+  display: none;
+}
