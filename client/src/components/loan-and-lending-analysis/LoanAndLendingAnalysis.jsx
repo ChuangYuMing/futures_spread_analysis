@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { getLendingByDay, getLendingBalanceReduceByDay } from './rules'
 import RuleInput from './RuleInput'
 import Api from '../../api/api'
+import './loan.css'
 
 function LoanAndLendingAnalysis() {
   const rulesMap = [
@@ -69,15 +70,18 @@ function LoanAndLendingAnalysis() {
   return (
     <div className="analysis-wrap">
       <div className="rules-wrap">
-        {rulesMap.map(rule => (
-          <RuleInput
-            key={rule.ruleName}
-            ruleName={rule.ruleName}
-            text={rule.text}
-            toggleRule={toggleRule}
-          />
-        ))}
+        <div className="rules">
+          {rulesMap.map(rule => (
+            <RuleInput
+              key={rule.ruleName}
+              ruleName={rule.ruleName}
+              text={rule.text}
+              toggleRule={toggleRule}
+            />
+          ))}
+        </div>
         <span
+          className="action-btn"
           role="button"
           tabIndex="0"
           onClick={getResult}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import './rule-input.css'
 
 function RuleInput({ ruleName, toggleRule, text }) {
   const [checked, setChecked] = useState(false)

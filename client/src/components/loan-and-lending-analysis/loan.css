@@ -1,0 +1,19 @@
+.analysis-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.rules-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.rules-wrap .action-btn {
+  display: inline-block;
+  cursor: pointer;
+  margin-top: 20px;
+  border: solid 1px rgb(97, 97, 97);
+  width: fit-content;
+  padding: 4px 8px;
+  border-radius: 4px;
+}

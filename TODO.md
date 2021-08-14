@@ -5,3 +5,4 @@
 5. api domain strict
 6. candle chart
 7. ptt stock !?
+8. stylelint
