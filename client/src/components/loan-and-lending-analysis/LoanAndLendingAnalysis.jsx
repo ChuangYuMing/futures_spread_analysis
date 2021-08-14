@@ -142,26 +142,30 @@ function LoanAndLendingAnalysis() {
             </tr>
           </thead>
           <tbody>
-            {Object.keys(stockInfo?.credit_data || {}).map(date => {
-              const data = stockInfo.credit_data[date]
-              return (
-                <tr key={date}>
-                  <td>{date}</td>
-                  <td>{formatInfoData(data.sl_preDay_balance)}</td>
-                  <td>{formatInfoData(data.sl_sell)}</td>
-                  <td>{formatInfoData(data.sl_buy)}</td>
-                  <td>{formatInfoData(data.sl_cash_stock)}</td>
-                  <td>{formatInfoData(data.sl_day_balance)}</td>
-                  <td>{formatInfoData(data.sl_limit)}</td>
-                  <td>{formatInfoData(data.bw_preDay_balance)}</td>
-                  <td>{formatInfoData(data.bw_sell_on_day)}</td>
-                  <td>{formatInfoData(data.bw_return_on_day)}</td>
-                  <td>{formatInfoData(data.bw_adjust_on_day)}</td>
-                  <td>{formatInfoData(data.bw_day_balance)}</td>
-                  <td>{formatInfoData(data.bw_limit_on_next_business_day)}</td>
-                </tr>
-              )
-            })}
+            {Object.keys(stockInfo?.credit_data || {})
+              .sort((a, b) => new Date(b) - new Date(a))
+              .map(date => {
+                const data = stockInfo.credit_data[date]
+                return (
+                  <tr key={date}>
+                    <td>{date}</td>
+                    <td>{formatInfoData(data.sl_preDay_balance)}</td>
+                    <td>{formatInfoData(data.sl_sell)}</td>
+                    <td>{formatInfoData(data.sl_buy)}</td>
+                    <td>{formatInfoData(data.sl_cash_stock)}</td>
+                    <td>{formatInfoData(data.sl_day_balance)}</td>
+                    <td>{formatInfoData(data.sl_limit)}</td>
+                    <td>{formatInfoData(data.bw_preDay_balance)}</td>
+                    <td>{formatInfoData(data.bw_sell_on_day)}</td>
+                    <td>{formatInfoData(data.bw_return_on_day)}</td>
+                    <td>{formatInfoData(data.bw_adjust_on_day)}</td>
+                    <td>{formatInfoData(data.bw_day_balance)}</td>
+                    <td>
+                      {formatInfoData(data.bw_limit_on_next_business_day)}
+                    </td>
+                  </tr>
+                )
+              })}
           </tbody>
         </table>
       </div>
