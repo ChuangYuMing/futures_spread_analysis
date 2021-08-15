@@ -113,13 +113,13 @@ function FuturesBigOpenInterest({ year }) {
         stockData.push(obj)
       }
 
-      return hightChartCommon(
-        name,
-        '值',
+      return hightChartCommon({
+        subject: name,
+        yName: '值',
         year,
-        stockData,
-        debounceHandleHoverDate
-      )
+        data: stockData,
+        handleHoverDate: debounceHandleHoverDate
+      })
     }
     const options = selectedChartTypes.map(type => chartOptionFactory(type))
 

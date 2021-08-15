@@ -1,12 +1,13 @@
 import { toThousands } from './index'
 
-export const hightChartCommon = (
+export const hightChartCommon = ({
   subject,
   yName,
   year,
   data,
+  seriesType = 'line',
   handleHoverDate = () => {}
-) => ({
+}) => ({
   title: {
     text: `${year} ${subject}`,
     x: -20 // center
@@ -60,8 +61,15 @@ export const hightChartCommon = (
     verticalAlign: 'middle',
     borderWidth: 0
   },
+  plotOptions: {
+    candlestick: {
+      color: 'green',
+      upColor: 'red'
+    }
+  },
   series: [
     {
+      type: seriesType,
       turboThreshold: 0,
       name: subject,
       data

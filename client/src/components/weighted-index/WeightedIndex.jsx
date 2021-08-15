@@ -17,15 +17,24 @@ function WeightedIndex({ year }) {
         const item = res[key]
 
         const obj = {}
-        obj.y = parseInt(item.w_index)
         obj.x = Date.parse(key)
+        obj.close = parseInt(item.w_index)
+        obj.open = parseInt(item.open)
+        obj.high = parseInt(item.high)
+        obj.low = parseInt(item.low)
         obj.date = key
-        obj.w_index = item.w_index
         obj.is_settle = item.is_settle
         stockData.push(obj)
       }
 
-      setOptions(hightChartCommon('加權指數', '價位', year, stockData))
+      const chartOptions = hightChartCommon({
+        subject: '加權指數',
+        yName: '價位',
+        year,
+        data: stockData,
+        seriesType: 'candlestick'
+      })
+      setOptions(chartOptions)
       zoomToAll(chartComponent?.current?.chart)
     })
   }, [year])

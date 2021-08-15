@@ -1,12 +1,12 @@
 # First
 
 - 分析
-- StyleComponet
-- tune
-- candle chart
-- stylelint
 - 股票期貨 list
+- candle chart
+- StyleComponet
+- stylelint
 - router
+- tune
 
 # Second
 
