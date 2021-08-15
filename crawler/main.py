@@ -7,6 +7,7 @@ from spiders.three_corporate_option_opi_spider import OptionOpiSpider
 from spiders.tx_open_interest_spider import TxOpenInterestSpider
 from spiders.three_corporate_open_interest_spider import FuturesOpiSpider
 from spiders.securities_loan_and_stock_lending_spider import CreditSpider
+from spiders.stock_futures_list_spider import StockFuturesListSpider
 import base64
 
 def crawl(q, spider):
@@ -37,6 +38,7 @@ def main():
     run_spider(TxOpenInterestSpider)
     run_spider(FuturesOpiSpider)
     run_spider(CreditSpider)
+    run_spider(StockFuturesListSpider)
 
 def cloud_pubsub(event, context):
     """Triggered from a message on a Cloud Pub/Sub topic.
