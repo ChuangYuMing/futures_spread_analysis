@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import './rule-input.css'
 
-function RuleInput({ ruleName, toggleRule, text }) {
+function RuleInput({ ruleName, toggleRule, text, actionType }) {
   const [checked, setChecked] = useState(false)
   const [dayInput, setDayInput] = useState('')
 
@@ -32,10 +32,12 @@ function RuleInput({ ruleName, toggleRule, text }) {
         checked={checked}
         onChange={handleCheck}
       />
-      <div className="day-wrap">
-        <input name="dayInput" type="text" onChange={handleDayInput} />
-        <span>天連續</span>
-      </div>
+      {actionType === 'byDay' ? (
+        <div className="day-wrap">
+          <input name="dayInput" type="text" onChange={handleDayInput} />
+          <span>天連續</span>
+        </div>
+      ) : null}
       <span>{text}</span>
     </div>
   )
@@ -44,7 +46,8 @@ function RuleInput({ ruleName, toggleRule, text }) {
 RuleInput.propTypes = {
   ruleName: PropTypes.string.isRequired,
   toggleRule: PropTypes.func.isRequired,
-  text: PropTypes.string.isRequired
+  text: PropTypes.string.isRequired,
+  actionType: PropTypes.string.isRequired
 }
 
 export default RuleInput

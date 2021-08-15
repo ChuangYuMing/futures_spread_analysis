@@ -43,3 +43,8 @@ export const getLendingBalanceReduceByDay = (resData, { day }) => {
 
   return target
 }
+
+export const filterStockFuturesList = stockFuturesList => resData =>
+  resData.filter(
+    item => stockFuturesList.findIndex(stock => stock.code === item.code) !== -1
+  )

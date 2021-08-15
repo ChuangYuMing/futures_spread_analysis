@@ -1,20 +1,39 @@
 import React, { useState, useEffect } from 'react'
-import { getLendingByDay, getLendingBalanceReduceByDay } from './rules'
+import {
+  getLendingByDay,
+  getLendingBalanceReduceByDay,
+  filterStockFuturesList
+} from './rules'
 import RuleInput from './RuleInput'
 import Api from '../../api/api'
 import './loan.css'
 
 function LoanAndLendingAnalysis() {
+  const [stockFuturesList, setStockFuturesList] = useState([])
+  useEffect(() => {
+    Api.getStockFuturesList().then(res => {
+      setStockFuturesList(res)
+    })
+  }, [])
+
   const rulesMap = [
     {
       ruleName: 'LendingByDay',
       text: '借券賣出',
-      callBack: getLendingByDay
+      callBack: getLendingByDay,
+      actionType: 'byDay'
     },
     {
       ruleName: 'LendingBalanceReduceByDay',
       text: '借券賣出餘額減少',
-      callBack: getLendingBalanceReduceByDay
+      callBack: getLendingBalanceReduceByDay,
+      actionType: 'byDay'
+    },
+    {
+      ruleName: 'FilterStockFuturesList',
+      text: '過濾股票期貨',
+      callBack: filterStockFuturesList(stockFuturesList),
+      actionType: 'check'
     }
   ]
 
@@ -89,6 +108,7 @@ function LoanAndLendingAnalysis() {
               ruleName={rule.ruleName}
               text={rule.text}
               toggleRule={toggleRule}
+              actionType={rule.actionType}
             />
           ))}
         </div>

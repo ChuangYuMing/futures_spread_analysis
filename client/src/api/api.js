@@ -29,5 +29,10 @@ export default {
     return ApiInstance.get(
       `securities_loan_and_stock_lending/loan-and-lending.json`
     ).then(({ data }) => data)
+  },
+  getStockFuturesList() {
+    return ApiInstance.get(`stock_futures_list/stock_futures_list.json`).then(
+      ({ data }) => data
+    )
   }
 }
