@@ -6,14 +6,12 @@ import FuturesBigOpenInterestView from './view/FuturesBigOpenInterestView'
 import Navigation from './components/navigation/Navigation'
 import LoanAndLendingAnalysis from './components/loan-and-lending-analysis/LoanAndLendingAnalysis'
 
-import './App.css'
-
 function App() {
   return (
     <div className="App">
       <Router>
         <Navigation />
-        <div className="main">
+        <div className="p-5">
           <Switch>
             <Route path="/option-open-interest">
               <OptionOpenInterestVIew />

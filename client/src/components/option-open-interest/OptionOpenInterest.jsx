@@ -213,7 +213,7 @@ function OptionOpenInterest({ year }) {
   }, [selectedChartTypes, apiData])
 
   return (
-    <div className="option-open-wrapper">
+    <div className="md:pb-96">
       <div className="title-wrap">
         <span className="title">選擇權未平倉</span>
         <span
