@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import clsx from 'clsx'
 import {
   getLendingByDay,
   getLendingBalanceReduceByDay,
@@ -99,9 +100,9 @@ function LoanAndLendingAnalysis() {
   }, [])
 
   return (
-    <div className="analysis-wrap">
-      <div className="rules-wrap">
-        <div className="rules">
+    <div className="flex flex-col">
+      <div className="flex flex-col">
+        <div>
           {rulesMap.map(rule => (
             <RuleInput
               key={rule.ruleName}
@@ -113,7 +114,7 @@ function LoanAndLendingAnalysis() {
           ))}
         </div>
         <span
-          className="action-btn"
+          className="self-start inline-block w-auto px-2 py-1 mt-5 border rounded cursor-pointer border-warmGray-600"
           role="button"
           tabIndex="0"
           onClick={getResult}
@@ -122,7 +123,12 @@ function LoanAndLendingAnalysis() {
           取得結果
         </span>
       </div>
-      <div className={`res-wrap ${result.length ? '' : 'hidden'}`}>
+      <div
+        className={clsx(
+          'flex flex-wrap justify-start mt-10 p-5 border border-gray-800 rounded-lg',
+          !result.length && 'hidden'
+        )}
+      >
         {result.map(item => (
           <span
             key={item.code}

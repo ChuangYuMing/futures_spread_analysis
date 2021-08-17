@@ -1,8 +1,12 @@
+/* eslint-disable import/no-extraneous-dependencies */
+const colors = require('tailwindcss/colors')
+
 module.exports = {
   mode: 'jit',
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   darkMode: false,
   theme: {
+    colors,
     screens: {
       sm: '640px',
       md: '768px',

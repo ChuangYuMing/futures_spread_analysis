@@ -18,7 +18,12 @@ function YearSelector({ defaultYear, year, handler }) {
   return (
     <div className="year-selector">
       <label htmlFor="year">Choose a year:</label>
-      <select name="year" value={year} onChange={handleChange}>
+      <select
+        className="ml-2 text-orange-700 outline-none"
+        name="year"
+        value={year}
+        onChange={handleChange}
+      >
         {yearOptions}
       </select>
     </div>

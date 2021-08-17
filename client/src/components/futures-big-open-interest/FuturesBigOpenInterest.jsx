@@ -11,7 +11,6 @@ import {
 import { zoomToAll } from '../../utils/chart'
 import { debounce, toThousands } from '../../utils/index'
 import ItemSelector from '../common/item-selector/ItemSelector'
-import './style.css'
 
 AnnotationsModule(Highcharts)
 function FuturesBigOpenInterest({ year }) {
@@ -167,11 +166,11 @@ function FuturesBigOpenInterest({ year }) {
   }, [apiData])
 
   return (
-    <div className="option-open-wrapper">
-      <div className="title-wrap">
-        <span className="title">期貨大額交易人未沖銷部位</span>
+    <div>
+      <div className="inline-flex items-center justify-center my-4">
+        <span className="text-2xl">期貨大額交易人未沖銷部位</span>
         <span
-          className="clear-action"
+          className="px-2 py-1 ml-4 text-red-500 border border-red-500 cursor-pointer"
           onClick={clearAll}
           onKeyDown={clearAll}
           role="button"

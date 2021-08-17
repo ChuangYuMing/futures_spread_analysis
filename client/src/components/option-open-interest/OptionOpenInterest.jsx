@@ -8,7 +8,6 @@ import { hightChartCommon } from '../../utils/hightChartOptionsFactory'
 import { zoomToAll } from '../../utils/chart'
 import { debounce, toThousands } from '../../utils/index'
 import ItemSelector from '../common/item-selector/ItemSelector'
-import './style.css'
 
 AnnotationsModule(Highcharts)
 function OptionOpenInterest({ year }) {
@@ -214,10 +213,10 @@ function OptionOpenInterest({ year }) {
 
   return (
     <div className="md:pb-96">
-      <div className="title-wrap">
-        <span className="title">選擇權未平倉</span>
+      <div className="inline-flex items-center justify-center my-4">
+        <span className="text-2xl">選擇權未平倉</span>
         <span
-          className="clear-action"
+          className="px-2 py-1 ml-4 text-red-500 border border-red-500 cursor-pointer"
           onClick={clearAll}
           onKeyDown={clearAll}
           role="button"
@@ -234,7 +233,7 @@ function OptionOpenInterest({ year }) {
       />
       {chartOptions.map((option, index) => (
         <HighchartsReact
-          key={option.title.text}
+          ey={option.title.text}
           ref={element => (chartComponents.current[index] = element)}
           highcharts={Highcharts}
           constructorType="stockChart"

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import './rule-input.css'
 
 function RuleInput({ ruleName, toggleRule, text, actionType }) {
   const [checked, setChecked] = useState(false)
@@ -25,16 +24,22 @@ function RuleInput({ ruleName, toggleRule, text, actionType }) {
   }, [dayInput])
 
   return (
-    <div className="rule-input">
+    <div className="inline-flex items-center justify-center mr-4">
       <input
+        className="mr-1"
         name={ruleName}
         type="checkbox"
         checked={checked}
         onChange={handleCheck}
       />
       {actionType === 'byDay' ? (
-        <div className="day-wrap">
-          <input name="dayInput" type="text" onChange={handleDayInput} />
+        <div className="inline-block">
+          <input
+            className="w-12 pr-1 text-right text-orange-700 border-b border-gray-800 outline-none"
+            name="dayInput"
+            type="text"
+            onChange={handleDayInput}
+          />
           <span>天連續</span>
         </div>
       ) : null}
