@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/futures_spread_analysis/static/css/main.6911f76c.chunk.css",
-    "main.js": "/futures_spread_analysis/static/js/main.acf983c1.chunk.js",
-    "main.js.map": "/futures_spread_analysis/static/js/main.acf983c1.chunk.js.map",
-    "runtime-main.js": "/futures_spread_analysis/static/js/runtime-main.fe7af601.js",
-    "runtime-main.js.map": "/futures_spread_analysis/static/js/runtime-main.fe7af601.js.map",
-    "static/js/2.43a65a78.chunk.js": "/futures_spread_analysis/static/js/2.43a65a78.chunk.js",
-    "static/js/2.43a65a78.chunk.js.map": "/futures_spread_analysis/static/js/2.43a65a78.chunk.js.map",
-    "static/js/3.956d3beb.chunk.js": "/futures_spread_analysis/static/js/3.956d3beb.chunk.js",
-    "static/js/3.956d3beb.chunk.js.map": "/futures_spread_analysis/static/js/3.956d3beb.chunk.js.map",
+    "main.css": "/futures_spread_analysis/static/css/main.53313729.chunk.css",
+    "main.js": "/futures_spread_analysis/static/js/main.e959479e.chunk.js",
+    "main.js.map": "/futures_spread_analysis/static/js/main.e959479e.chunk.js.map",
+    "runtime-main.js": "/futures_spread_analysis/static/js/runtime-main.0441f729.js",
+    "runtime-main.js.map": "/futures_spread_analysis/static/js/runtime-main.0441f729.js.map",
+    "static/js/2.6ec3f87b.chunk.js": "/futures_spread_analysis/static/js/2.6ec3f87b.chunk.js",
+    "static/js/2.6ec3f87b.chunk.js.map": "/futures_spread_analysis/static/js/2.6ec3f87b.chunk.js.map",
+    "static/js/3.00d41ea5.chunk.js": "/futures_spread_analysis/static/js/3.00d41ea5.chunk.js",
+    "static/js/3.00d41ea5.chunk.js.map": "/futures_spread_analysis/static/js/3.00d41ea5.chunk.js.map",
     "index.html": "/futures_spread_analysis/index.html",
-    "static/css/main.6911f76c.chunk.css.map": "/futures_spread_analysis/static/css/main.6911f76c.chunk.css.map",
-    "static/js/2.43a65a78.chunk.js.LICENSE.txt": "/futures_spread_analysis/static/js/2.43a65a78.chunk.js.LICENSE.txt"
+    "static/css/main.53313729.chunk.css.map": "/futures_spread_analysis/static/css/main.53313729.chunk.css.map",
+    "static/js/2.6ec3f87b.chunk.js.LICENSE.txt": "/futures_spread_analysis/static/js/2.6ec3f87b.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.fe7af601.js",
-    "static/js/2.43a65a78.chunk.js",
-    "static/css/main.6911f76c.chunk.css",
-    "static/js/main.acf983c1.chunk.js"
+    "static/js/runtime-main.0441f729.js",
+    "static/js/2.6ec3f87b.chunk.js",
+    "static/css/main.53313729.chunk.css",
+    "static/js/main.e959479e.chunk.js"
   ]
 }
