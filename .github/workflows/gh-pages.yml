@@ -41,6 +41,8 @@ jobs:
 
       - run: CI=false yarn build:gh-page
 
+      - run: mv ./client/build/404.gh-page.html ./client/build/404.html
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/master' }}
