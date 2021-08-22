@@ -1,10 +1,5 @@
 # First
 
-- 分析
-- 股票期貨 list
-- candle chart
-- StyleComponet
-- stylelint
 - router
 - tune
 
@@ -15,3 +10,4 @@
 - console 圖
 - netlify
 - api domain strict
+- manifest.json
