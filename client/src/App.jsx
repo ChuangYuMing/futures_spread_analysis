@@ -7,25 +7,26 @@ import Navigation from './components/navigation/Navigation'
 import LoanAndLendingAnalysis from './components/loan-and-lending-analysis/LoanAndLendingAnalysis'
 
 function App() {
+  const pathPrefix = process.env.REACT_APP_PUBLIC_URL
   return (
     <div className="App">
       <Router>
         <Navigation />
         <div className="p-5">
           <Switch>
-            <Route path="/option-open-interest">
+            <Route path={`${pathPrefix}/option-open-interest`}>
               <OptionOpenInterestVIew />
             </Route>
-            <Route path="/futures-open-interest">
+            <Route path={`${pathPrefix}/futures-open-interest`}>
               <FuturesOpenInterestView />
             </Route>
-            <Route path="/futures-big-open-interest">
+            <Route path={`${pathPrefix}/futures-big-open-interest`}>
               <FuturesBigOpenInterestView />
             </Route>
-            <Route path="/loan-and-lending-analysis">
+            <Route path={`${pathPrefix}/loan-and-lending-analysis`}>
               <LoanAndLendingAnalysis />
             </Route>
-            <Route path="/">
+            <Route path={`${pathPrefix}/`}>
               <OptionOpenInterestVIew />
             </Route>
           </Switch>
