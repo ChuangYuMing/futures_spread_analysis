@@ -20,7 +20,8 @@
   },
   "scripts": {
     "start": "TAILWIND_MODE=watch craco start",
-    "build": "craco build",
+    "build": "sh -ac '. ./.env.${REACT_APP_ENV}; craco build'",
+    "build:gh-page": "REACT_APP_ENV=gh-page yarn build",
     "test": "craco test",
     "eject": "react-scripts eject",
     "predeploy": "yarn build",

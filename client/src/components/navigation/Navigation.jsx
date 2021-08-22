@@ -35,7 +35,7 @@ function Navigation() {
             'px-4 py-2 text-lg  hover:text-orange-700',
             item.isMatch ? 'text-orange-700' : 'text-coolGray-700'
           )}
-          to={`/${item.route}`}
+          to={`${process.env.REACT_APP_PUBLIC_URL}/${item.route}`}
         >
           {item.text}
         </NavLink>
