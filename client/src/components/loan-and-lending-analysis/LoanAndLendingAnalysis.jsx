@@ -7,7 +7,6 @@ import {
 } from './rules'
 import RuleInput from './RuleInput'
 import Api from '../../api/api'
-import './loan.css'
 
 function LoanAndLendingAnalysis() {
   const [stockFuturesList, setStockFuturesList] = useState([])
@@ -132,7 +131,12 @@ function LoanAndLendingAnalysis() {
         {result.map(item => (
           <span
             key={item.code}
-            className={selectedCode === item.code ? 'active' : ''}
+            className={clsx(
+              'inline-block py-1 px-2 border rounded-lg mr-2 mb-1 border-orange-400',
+              selectedCode === item.code
+                ? 'bg-orange-400 text-blueGray-900'
+                : ''
+            )}
             role="button"
             tabIndex="0"
             onClick={() => setSelectedCode(item.code)}
@@ -142,29 +146,38 @@ function LoanAndLendingAnalysis() {
           </span>
         ))}
       </div>
-      <div className={`stock-info ${stockInfo ? '' : 'hidden'}`}>
-        <table className="info-table">
+      <div
+        className={clsx(
+          'flex flex-wrap justify-start  mt-5 rounded-lg',
+          stockInfo ? '' : 'hidden'
+        )}
+      >
+        <table className="border border-collapse border-gray-700">
           <thead>
             <tr role="row">
-              <th rowSpan="2">
+              <th rowSpan="2" className="table-td">
                 {stockInfo?.code} {stockInfo?.name}
               </th>
-              <th colSpan="6">融券</th>
-              <th colSpan="6">借券賣出</th>
+              <th colSpan="6" className="table-th ">
+                融券
+              </th>
+              <th colSpan="6" className="table-th">
+                借券賣出
+              </th>
             </tr>
             <tr role="row">
-              <th>前日餘額</th>
-              <th>賣出</th>
-              <th>買進</th>
-              <th>現券</th>
-              <th>今日餘額</th>
-              <th>限額</th>
-              <th>前日餘額</th>
-              <th>當日賣出</th>
-              <th>當日還券</th>
-              <th>當日調整</th>
-              <th>當日餘額</th>
-              <th>次一營業日可限額</th>
+              <th className="table-td">前日餘額</th>
+              <th className="table-td">賣出</th>
+              <th className="table-td">買進</th>
+              <th className="table-td">現券</th>
+              <th className="table-td">今日餘額</th>
+              <th className="table-td">限額</th>
+              <th className="table-td">前日餘額</th>
+              <th className="table-td">當日賣出</th>
+              <th className="table-td">當日還券</th>
+              <th className="table-td">當日調整</th>
+              <th className="table-td">當日餘額</th>
+              <th className="table-td">次一營業日可限額</th>
             </tr>
           </thead>
           <tbody>
@@ -174,19 +187,37 @@ function LoanAndLendingAnalysis() {
                 const data = stockInfo.credit_data[date]
                 return (
                   <tr key={date}>
-                    <td>{date}</td>
-                    <td>{formatInfoData(data.sl_preDay_balance)}</td>
-                    <td>{formatInfoData(data.sl_sell)}</td>
-                    <td>{formatInfoData(data.sl_buy)}</td>
-                    <td>{formatInfoData(data.sl_cash_stock)}</td>
-                    <td>{formatInfoData(data.sl_day_balance)}</td>
-                    <td>{formatInfoData(data.sl_limit)}</td>
-                    <td>{formatInfoData(data.bw_preDay_balance)}</td>
-                    <td>{formatInfoData(data.bw_sell_on_day)}</td>
-                    <td>{formatInfoData(data.bw_return_on_day)}</td>
-                    <td>{formatInfoData(data.bw_adjust_on_day)}</td>
-                    <td>{formatInfoData(data.bw_day_balance)}</td>
-                    <td>
+                    <td className="table-td">{date}</td>
+                    <td className="table-td">
+                      {formatInfoData(data.sl_preDay_balance)}
+                    </td>
+                    <td className="table-td">{formatInfoData(data.sl_sell)}</td>
+                    <td className="table-td">{formatInfoData(data.sl_buy)}</td>
+                    <td className="table-td">
+                      {formatInfoData(data.sl_cash_stock)}
+                    </td>
+                    <td className="table-td">
+                      {formatInfoData(data.sl_day_balance)}
+                    </td>
+                    <td className="table-td">
+                      {formatInfoData(data.sl_limit)}
+                    </td>
+                    <td className="table-td">
+                      {formatInfoData(data.bw_preDay_balance)}
+                    </td>
+                    <td className="table-td">
+                      {formatInfoData(data.bw_sell_on_day)}
+                    </td>
+                    <td className="table-td">
+                      {formatInfoData(data.bw_return_on_day)}
+                    </td>
+                    <td className="table-td">
+                      {formatInfoData(data.bw_adjust_on_day)}
+                    </td>
+                    <td className="table-td">
+                      {formatInfoData(data.bw_day_balance)}
+                    </td>
+                    <td className="table-td">
                       {formatInfoData(data.bw_limit_on_next_business_day)}
                     </td>
                   </tr>
