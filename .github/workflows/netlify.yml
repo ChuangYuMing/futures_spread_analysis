@@ -41,9 +41,10 @@ jobs:
 
       - run: CI=false yarn build:prod
 
+      - run: ls
+
       - name: Deploy
         uses: netlify/actions/cli@master
-        run: ls
         with:
           args: deploy --dir=./client/build --prod
         env:
