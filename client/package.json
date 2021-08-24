@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "homepage": "https://chuangyuming.github.io/futures_spread_analysis",
+  "homepage": "./",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
