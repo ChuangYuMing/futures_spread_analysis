@@ -39,12 +39,13 @@ jobs:
 
       - run: yarn install --frozen-lockfile
 
-      - run: CI=false yarn build:gh-page
+      - run: CI=false yarn build:prod
 
       - name: Deploy
         uses: netlify/actions/cli@master
+        run: ls
         with:
-          args: deploy --dir=build --prod
+          args: deploy --dir=./client/build --prod
         env:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
