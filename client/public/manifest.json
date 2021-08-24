@@ -1,6 +1,8 @@
 {
   "short_name": "Futures Analysis",
   "name": "Futures Analysis",
+  "lang": "zh-Hant-TW",
+  "description": "籌碼分析 - 個股篩選",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,18 +10,18 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "icon-192x192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "icon-512x512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "start_url": "./?utm_source=web_app_manifest",
+  "display": "fullscreen",
+  "theme_color": "#2196f3",
+  "background_color": "#2196f3"
 }
