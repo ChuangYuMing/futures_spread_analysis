@@ -9,7 +9,7 @@ def cors_configuration(bucket_name):
     bucket = storage_client.get_bucket(bucket_name)
     bucket.cors = [
         {
-            "origin": ["http://localhost:3000", "https://chuangyuming.github.io", "https://futures-stock.netlify.app"],
+            "origin": ["http://localhost:3000", "https://chuangyuming.github.io", "https://futures-stock.netlify.app", "https://futures-stock.childben.com"],
             "responseHeader": [
                 "Content-Type",
                 "x-goog-resumable"],
