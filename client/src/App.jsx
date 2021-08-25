@@ -11,6 +11,7 @@ import FuturesBigOpenInterestView from './view/FuturesBigOpenInterestView'
 import Navigation from './components/navigation/Navigation'
 import LoanAndLendingAnalysis from './components/loan-and-lending-analysis/LoanAndLendingAnalysis'
 import useLocalStorage from './hooks/useLocalStorage'
+import { sendEvent } from './utils/googleAnalytics'
 
 function App() {
   const history = useHistory()
@@ -34,9 +35,21 @@ function App() {
   useEffect(() => {
     if (firstEnterTime === dateNow) {
       setFirstEnterTime(dateNow)
+      sendEvent({
+        action: '第一次進入時間',
+        label: new Date().toLocaleString(),
+        isNonInteraction: true
+      })
     }
 
     setEnterCount(newEnterCount)
+
+    sendEvent({
+      action: '進入次數',
+      label: newEnterCount,
+      value: newEnterCount,
+      isNonInteraction: true
+    })
   }, [])
 
   return (
