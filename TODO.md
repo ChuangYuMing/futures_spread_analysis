@@ -8,8 +8,6 @@
 
 - localstorage 紀錄
 
-- ga
-
 - console
 
 # OTHER
@@ -19,3 +17,5 @@
 - service worker
 
 - api domain strict
+
+- develop branch
