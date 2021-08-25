@@ -233,7 +233,7 @@ function OptionOpenInterest({ year }) {
       />
       {chartOptions.map((option, index) => (
         <HighchartsReact
-          ey={option.title.text}
+          key={option.title.text}
           ref={element => (chartComponents.current[index] = element)}
           highcharts={Highcharts}
           constructorType="stockChart"

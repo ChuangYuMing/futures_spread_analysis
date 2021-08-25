@@ -11,6 +11,8 @@ import FuturesBigOpenInterestView from './view/FuturesBigOpenInterestView'
 import Navigation from './components/navigation/Navigation'
 import LoanAndLendingAnalysis from './components/loan-and-lending-analysis/LoanAndLendingAnalysis'
 import useLocalStorage from './hooks/useLocalStorage'
+import Questions from './components/questions/Questions'
+
 import { sendEvent } from './utils/googleAnalytics'
 
 function App() {
@@ -69,6 +71,9 @@ function App() {
             </Route>
             <Route path={`${pathPrefix}/loan-and-lending-analysis`}>
               <LoanAndLendingAnalysis />
+            </Route>
+            <Route path={`${pathPrefix}/your-questions`}>
+              <Questions />
             </Route>
             <Route path={`${pathPrefix}/`}>
               <OptionOpenInterestVIew />

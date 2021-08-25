@@ -22,6 +22,10 @@ function Navigation() {
     {
       text: '融券(借券賣出)分析',
       route: `${pathPrefix}/loan-and-lending-analysis`
+    },
+    {
+      text: '建議與問題',
+      route: `${pathPrefix}/your-questions`
     }
   ]
 
