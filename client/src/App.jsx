@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   BrowserRouter as Router,
   Switch,
@@ -10,6 +10,7 @@ import FuturesOpenInterestView from './view/FuturesOpenInterestView'
 import FuturesBigOpenInterestView from './view/FuturesBigOpenInterestView'
 import Navigation from './components/navigation/Navigation'
 import LoanAndLendingAnalysis from './components/loan-and-lending-analysis/LoanAndLendingAnalysis'
+import useLocalStorage from './hooks/useLocalStorage'
 
 function App() {
   const history = useHistory()
@@ -20,6 +21,23 @@ function App() {
     const pathName = window.location.pathname
     history.push(`${pathName}${path}`)
   }
+
+  const dateNow = Date.now()
+  const [firstEnterTime, setFirstEnterTime] = useLocalStorage(
+    'firstEnterTime',
+    dateNow
+  )
+
+  const [enterCount, setEnterCount] = useLocalStorage('enterCount', 0)
+  const newEnterCount = enterCount + 1
+
+  useEffect(() => {
+    if (firstEnterTime === dateNow) {
+      setFirstEnterTime(dateNow)
+    }
+
+    setEnterCount(newEnterCount)
+  }, [])
 
   return (
     <div className="App">
