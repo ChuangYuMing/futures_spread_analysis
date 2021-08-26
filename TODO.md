@@ -1,6 +1,8 @@
 # TODO
 
-- data validate
+- mobile
+
+- ptt 發文
 
 # OTHER
 
@@ -11,3 +13,7 @@
 - api domain strict
 
 - develop branch
+
+- 贊助
+
+- 個股走勢
