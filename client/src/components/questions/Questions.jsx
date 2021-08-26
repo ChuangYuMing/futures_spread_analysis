@@ -2,7 +2,7 @@ import React from 'react'
 
 function Questions() {
   return (
-    <div>
+    <div className="-mt-5">
       <div className="mb-2">
         <span className="mr-2 text-lg text-orange-600">為什麼做這網站</span>
         <p className="max-w-3xl">
@@ -17,6 +17,9 @@ function Questions() {
       <span className="mr-2 text-lg text-orange-600">資料更新時間</span>
       <div>融券資料更新時間： 每日晚上 9 點</div>
       <div>其他資料更新時間： 每日下午 5 點</div>
+      <div className="mt-1 text-xs">
+        (如果有確定公開資料的更新時間，也歡迎告知！)
+      </div>
       <div className="my-4">
         <span className="mr-2 text-lg text-orange-600">
           建議與問題 (google 表單)
@@ -35,7 +38,7 @@ function Questions() {
         <div className="flex flex-col">
           <span className="mr-2">選擇權未平倉:</span>
           <a
-            className="text-blue-600 hover:text-blue-800"
+            className="text-blue-600 truncate hover:text-blue-800 w-80"
             href="https://www.taifex.com.tw/cht/3/callsAndPutsDate"
             target="_blank"
             rel="noreferrer"
@@ -46,7 +49,7 @@ function Questions() {
         <div className="flex flex-col">
           <span className="mr-2">期貨未平倉:</span>
           <a
-            className="text-blue-600 hover:text-blue-800"
+            className="text-blue-600 truncate hover:text-blue-800 w-80"
             href="https://www.taifex.com.tw/cht/3/futContractsDate"
             target="_blank"
             rel="noreferrer"
@@ -57,7 +60,7 @@ function Questions() {
         <div className="flex flex-col">
           <span className="mr-2">期貨大額交易人未沖銷:</span>
           <a
-            className="text-blue-600 hover:text-blue-800"
+            className="text-blue-600 truncate hover:text-blue-800 w-80"
             href="https://www.taifex.com.tw/cht/3/largeTraderFutQry"
             target="_blank"
             rel="noreferrer"
@@ -68,7 +71,7 @@ function Questions() {
         <div className="flex flex-col">
           <span className="mr-2">融券(借券賣出):</span>
           <a
-            className="text-blue-600 hover:text-blue-800"
+            className="text-blue-600 truncate hover:text-blue-800 w-80"
             href="http://www.twse.com.tw/zh/page/trading/exchange/TWT93U.html"
             target="_blank"
             rel="noreferrer"
@@ -79,7 +82,7 @@ function Questions() {
         <div className="flex flex-col">
           <span className="mr-2">大盤加權指數:</span>
           <a
-            className="text-blue-600 hover:text-blue-800"
+            className="text-blue-600 truncate hover:text-blue-800 w-80"
             href="https://www.twse.com.tw/zh/page/trading/indices/MI_5MINS_HIST.html"
             target="_blank"
             rel="noreferrer"
@@ -90,7 +93,7 @@ function Questions() {
         <div className="flex flex-col">
           <span className="mr-2">股票期貨清單:</span>
           <a
-            className="text-blue-600 hover:text-blue-800"
+            className="text-blue-600 truncate hover:text-blue-800 w-80"
             href="https://www.taifex.com.tw/cht/2/stockLists"
             target="_blank"
             rel="noreferrer"

@@ -1,6 +1,7 @@
 import React from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import clsx from 'clsx'
+import logo from '../../assets/img/logo.png'
 
 function Navigation() {
   const pathPrefix = process.env.REACT_APP_PUBLIC_URL
@@ -30,7 +31,8 @@ function Navigation() {
   ]
 
   return (
-    <div className="sticky top-0 z-10 flex items-center justify-start pb-1 mb-5 bg-white border-b border-gray-500">
+    <div className="sticky top-0 z-10 flex items-center justify-start pb-1 pl-1 mb-5 bg-white border-b border-gray-300">
+      <img className="w-10" src={logo} alt="logo" />
       {navMap.map(item => {
         const { route } = item
         const path = location.pathname
