@@ -24,7 +24,7 @@ function RuleInput({ ruleName, toggleRule, text, actionType }) {
   }, [dayInput])
 
   return (
-    <div className="inline-flex items-center justify-center mr-4">
+    <div className="inline-flex items-center justify-center mr-4 text-gray-800">
       <input
         className="mr-1"
         name={ruleName}
@@ -35,7 +35,7 @@ function RuleInput({ ruleName, toggleRule, text, actionType }) {
       {actionType === 'byDay' ? (
         <div className="inline-block">
           <input
-            className="w-12 pr-1 text-right text-orange-700 border-b border-gray-800 outline-none"
+            className="w-12 pr-1 text-right text-orange-700 border-b border-gray-700 outline-none"
             name="dayInput"
             type="text"
             onChange={handleDayInput}

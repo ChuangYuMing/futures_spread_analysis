@@ -2,7 +2,7 @@ import React from 'react'
 
 function Questions() {
   return (
-    <div className="-mt-5">
+    <div className="-mt-5 text-gray-800">
       <div className="mb-2">
         <span className="mr-2 text-lg text-orange-600">為什麼做這網站</span>
         <p className="max-w-3xl">
