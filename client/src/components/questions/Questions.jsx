@@ -20,7 +20,7 @@ function Questions() {
       <div className="mt-1 text-xs">
         (如果有確定公開資料的更新時間，也歡迎告知！)
       </div>
-      <div className="my-4">
+      <div className="flex flex-col my-4">
         <span className="mr-2 text-lg text-orange-600">
           建議與問題 (google 表單)
         </span>
