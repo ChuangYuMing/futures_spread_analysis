@@ -113,7 +113,7 @@ function LoanAndLendingAnalysis() {
           ))}
         </div>
         <span
-          className="self-start inline-block w-auto px-2 py-1 mt-5 border rounded cursor-pointer border-warmGray-600"
+          className="self-start inline-block w-auto px-2 py-1 mt-5 text-gray-700 border rounded cursor-pointer border-warmGray-600"
           role="button"
           tabIndex="0"
           onClick={getResult}
@@ -124,7 +124,7 @@ function LoanAndLendingAnalysis() {
       </div>
       <div
         className={clsx(
-          'flex flex-wrap justify-start mt-10 p-5 border border-gray-800 rounded-lg',
+          'flex flex-wrap justify-start mt-10 p-5 border border-gray-300 rounded-lg',
           !result.length && 'hidden'
         )}
       >
@@ -132,10 +132,8 @@ function LoanAndLendingAnalysis() {
           <span
             key={item.code}
             className={clsx(
-              'inline-block py-1 px-2 border rounded-lg mr-2 mb-1 border-orange-400',
-              selectedCode === item.code
-                ? 'bg-orange-400 text-blueGray-900'
-                : ''
+              'inline-block py-1 px-2 border rounded-lg mr-2 mb-1 border-orange-400 text-gray-700',
+              selectedCode === item.code ? 'bg-orange-400 text-gray-900' : ''
             )}
             role="button"
             tabIndex="0"
@@ -152,32 +150,32 @@ function LoanAndLendingAnalysis() {
           stockInfo ? '' : 'hidden'
         )}
       >
-        <table className="border border-collapse border-gray-700">
+        <table className="text-gray-700 border border-collapse ">
           <thead>
             <tr role="row">
-              <th rowSpan="2" className="table-td">
+              <th rowSpan="2" className="font-medium table-td">
                 {stockInfo?.code} {stockInfo?.name}
               </th>
-              <th colSpan="6" className="table-th ">
+              <th colSpan="6" className="font-medium table-th">
                 融券
               </th>
-              <th colSpan="6" className="table-th">
+              <th colSpan="6" className="font-medium table-th">
                 借券賣出
               </th>
             </tr>
             <tr role="row">
-              <th className="table-td">前日餘額</th>
-              <th className="table-td">賣出</th>
-              <th className="table-td">買進</th>
-              <th className="table-td">現券</th>
-              <th className="table-td">今日餘額</th>
-              <th className="table-td">限額</th>
-              <th className="table-td">前日餘額</th>
-              <th className="table-td">當日賣出</th>
-              <th className="table-td">當日還券</th>
-              <th className="table-td">當日調整</th>
-              <th className="table-td">當日餘額</th>
-              <th className="table-td">次一營業日可限額</th>
+              <th className="font-medium table-td">前日餘額</th>
+              <th className="font-medium table-td">賣出</th>
+              <th className="font-medium table-td">買進</th>
+              <th className="font-medium table-td">現券</th>
+              <th className="font-medium table-td">今日餘額</th>
+              <th className="font-medium table-td">限額</th>
+              <th className="font-medium table-td">前日餘額</th>
+              <th className="font-medium table-td">當日賣出</th>
+              <th className="font-medium table-td">當日還券</th>
+              <th className="font-medium table-td">當日調整</th>
+              <th className="font-medium table-td">當日餘額</th>
+              <th className="font-medium table-td">次一營業日可限額</th>
             </tr>
           </thead>
           <tbody>

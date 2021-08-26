@@ -3,9 +3,15 @@
 @tailwind utilities;
 
 .table-td {
-  @apply border border-gray-700 text-right py-1 px-2;
+  @apply border border-gray-300 text-right py-1 px-2;
 }
 
 .table-th {
-  @apply border border-gray-700 text-center py-1 px-2;
+  @apply border border-gray-300 text-center py-1 px-2;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

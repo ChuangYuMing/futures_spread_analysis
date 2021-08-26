@@ -14,6 +14,9 @@ module.exports = {
       xl: '1280px',
       '2xl': '1536px'
     },
+    fontFamily: {
+      body: 'Noto Sans TC, system-ui, -apple-system, Roboto, sans-serif'
+    },
     extend: {}
   },
   variants: {},
