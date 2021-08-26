@@ -47,6 +47,7 @@ function ItemSelector({
           'cursor-pointer',
           'mr-1',
           'mt-1',
+          'text-sm lg:text-base',
           isActive ? 'border-blue-800' : 'border-blue-600',
           isActive ? 'text-white' : 'text-blue-600',
           isActive && 'bg-blue-800'

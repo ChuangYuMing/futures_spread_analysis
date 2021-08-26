@@ -40,7 +40,8 @@ function Navigation() {
           <NavLink
             key={item.text}
             className={clsx(
-              'px-4 py-2 text-lg  hover:text-orange-700',
+              'px-2 py-2 text-xs  hover:text-orange-700',
+              'lg:text-lg lg:px-4',
               path === route || (isRoot && route === optionOpenNav)
                 ? 'text-orange-700'
                 : 'text-coolGray-700'

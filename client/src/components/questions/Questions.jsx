@@ -32,7 +32,7 @@ function Questions() {
       </div>
       <div className="flex flex-col">
         <span className="mb-1 text-lg text-orange-600">資料來源</span>
-        <div>
+        <div className="flex flex-col">
           <span className="mr-2">選擇權未平倉:</span>
           <a
             className="text-blue-600 hover:text-blue-800"
@@ -43,7 +43,7 @@ function Questions() {
             https://www.taifex.com.tw/cht/3/callsAndPutsDate
           </a>
         </div>
-        <div>
+        <div className="flex flex-col">
           <span className="mr-2">期貨未平倉:</span>
           <a
             className="text-blue-600 hover:text-blue-800"
@@ -54,7 +54,7 @@ function Questions() {
             https://www.taifex.com.tw/cht/3/futContractsDate
           </a>
         </div>
-        <div>
+        <div className="flex flex-col">
           <span className="mr-2">期貨大額交易人未沖銷:</span>
           <a
             className="text-blue-600 hover:text-blue-800"
@@ -65,7 +65,7 @@ function Questions() {
             https://www.taifex.com.tw/cht/3/largeTraderFutQry
           </a>
         </div>
-        <div>
+        <div className="flex flex-col">
           <span className="mr-2">融券(借券賣出):</span>
           <a
             className="text-blue-600 hover:text-blue-800"
@@ -76,7 +76,7 @@ function Questions() {
             http://www.twse.com.tw/zh/page/trading/exchange/TWT93U.html
           </a>
         </div>
-        <div>
+        <div className="flex flex-col">
           <span className="mr-2">大盤加權指數:</span>
           <a
             className="text-blue-600 hover:text-blue-800"
@@ -85,6 +85,17 @@ function Questions() {
             rel="noreferrer"
           >
             https://www.twse.com.tw/zh/page/trading/indices/MI_5MINS_HIST.html
+          </a>
+        </div>
+        <div className="flex flex-col">
+          <span className="mr-2">股票期貨清單:</span>
+          <a
+            className="text-blue-600 hover:text-blue-800"
+            href="https://www.taifex.com.tw/cht/2/stockLists"
+            target="_blank"
+            rel="noreferrer"
+          >
+            https://www.taifex.com.tw/cht/2/stockLists
           </a>
         </div>
       </div>
