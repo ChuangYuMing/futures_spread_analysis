@@ -5,3 +5,7 @@
 # Crawler
 
 > scrapy crawl securities_loan_and_stock_lending -a start=20210730 -a end=20210730
+
+# Active python venv
+
+> source /Users/yuming/Documents/futures_spread_analysis/crawler/bin/activate
