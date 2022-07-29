@@ -52,7 +52,7 @@ Reindent==0.1.1
 requests==2.24.0
 resumable-urlretrieve==0.1.5
 rsa==4.7
-Scrapy==2.2.1
+Scrapy==2.6.2
 semver==2.7.8
 service-identity==18.1.0
 six==1.15.0
