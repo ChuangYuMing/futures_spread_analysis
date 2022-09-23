@@ -34,7 +34,7 @@ parsel==1.6.0
 pew==0.1.26
 pip-tools==1.9.0
 Protego==0.1.16
-protobuf==3.12.2
+protobuf==3.18.3
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycodestyle==2.3.1
