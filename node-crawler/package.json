@@ -4,7 +4,9 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint --ext .ts,.js . --cache --quiet",
+    "lint:ts": "tsc --noEmit",
+    "prepare": "cd .. && husky node-crawler/.husky"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +17,8 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.1.3",
+    "husky": "^9.0.7",
+    "lint-staged": "^15.2.0",
     "prettier": "^3.2.4",
     "typescript": "^5.3.3"
   },
