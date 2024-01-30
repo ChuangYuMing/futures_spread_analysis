@@ -4,6 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
+    "watch": "tsc -w",
     "lint": "eslint --ext .ts,.js . --cache --quiet",
     "lint:ts": "tsc --noEmit",
     "prepare": "cd .. && husky node-crawler/.husky"
