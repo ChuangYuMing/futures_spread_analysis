@@ -1,9 +1,15 @@
 import axios from 'axios'
-import { parse, format, addMonths, setDate } from 'date-fns'
+import { format, addMonths, setDate } from 'date-fns'
 
-const args = process.argv.slice(2)
-let startDate = args[0] ? setDate(new Date(args[0]), 1) : setDate(new Date(), 1)
-const endDate = args[1] ? setDate(new Date(args[1]), 1) : setDate(new Date(), 1)
+const args: string[] = process.argv.slice(2)
+
+let startDate: Date = args[0]
+  ? setDate(new Date(args[0]), 1)
+  : setDate(new Date(), 1)
+
+const endDate: Date = args[1]
+  ? setDate(new Date(args[1]), 1)
+  : setDate(new Date(), 1)
 const url = 'https://www.twse.com.tw/indicesReport/MI_5MINS_HIST'
 
 function getParamsFormatDateString(date: Date) {
