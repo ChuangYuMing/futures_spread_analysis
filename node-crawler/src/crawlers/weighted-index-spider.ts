@@ -1,3 +1,6 @@
+// 加權指數
+// https://www.twse.com.tw/zh/page/trading/indices/MI_5MINS_HIST.html
+
 import axios from 'axios'
 import { format, addMonths, setDate } from 'date-fns'
 
