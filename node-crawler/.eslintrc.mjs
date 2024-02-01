@@ -1,11 +1,11 @@
-module.exports = {
+export default {
   env: {
     es6: true,
     node: true
   },
   extends: ['eslint:recommended', 'plugin:node/recommended', 'prettier'],
   parserOptions: {
-    ecmaVersion: 2018
+    ecmaVersion: 2022
   },
   overrides: [
     {
@@ -20,5 +20,10 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['prettier', '@typescript-eslint'],
   root: true,
-  rules: {}
+  rules: {
+    'node/no-unsupported-features/es-syntax': [
+      'error',
+      { ignores: ['modules'] }
+    ]
+  }
 }
