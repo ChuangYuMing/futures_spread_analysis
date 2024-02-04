@@ -3,6 +3,7 @@
 
 import axios from 'axios'
 import { format, addMonths, setDate } from 'date-fns'
+import { delay } from '../utils/index.ts'
 
 const args: string[] = process.argv.slice(2)
 
@@ -15,27 +16,19 @@ const endDate: Date = args[1]
   : setDate(new Date(), 1)
 const url = 'https://www.twse.com.tw/indicesReport/MI_5MINS_HIST'
 
-function getParamsFormatDateString(date: Date) {
-  return format(date, 'yyyyMM01')
-}
-
-function getData(date: Date) {
+function getWeightedIndex(date: Date) {
   const params = {
     response: 'json',
-    date: getParamsFormatDateString(date) // 20220101
+    date: format(date, 'yyyyMM01') // 20220101
   }
   return axios.get(url, { params })
 }
 
-function delay(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-async function getWeightedIndex() {
+async function main() {
   while (startDate <= endDate) {
     try {
       await delay(2000)
-      const response = await getData(startDate)
+      const response = await getWeightedIndex(startDate)
       console.log(response.data)
     } catch (error) {
       console.error(error)
@@ -46,4 +39,4 @@ async function getWeightedIndex() {
   return Promise.resolve()
 }
 
-await getWeightedIndex()
+await main()
