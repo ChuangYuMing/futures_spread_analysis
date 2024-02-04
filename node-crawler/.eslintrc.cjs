@@ -3,18 +3,24 @@ module.exports = {
     es6: true,
     node: true
   },
-  extends: ['eslint:recommended', 'plugin:node/recommended', 'prettier'],
+  extends: [
+    'eslint:recommended',
+    'plugin:node/recommended',
+    'plugin:@typescript-eslint/recommended-type-checked',
+    'prettier'
+  ],
   parserOptions: {
-    ecmaVersion: 2022
+    ecmaVersion: 2022,
+    project: true,
+    tsconfigRootDir: __dirname
   },
+  ignorePatterns: ['.eslintrc.cjs'],
   overrides: [
     {
-      files: ['./src/**/*.{ts,tsx}'],
-      parserOptions: {
-        project: true,
-        tsconfigRootDir: __dirname
-      },
-      extends: ['plugin:@typescript-eslint/recommended-type-checked']
+      extends: [
+        'plugin:@typescript-eslint/recommended-requiring-type-checking'
+      ],
+      files: ['./**/*.{ts,tsx}']
     }
   ],
   parser: '@typescript-eslint/parser',
