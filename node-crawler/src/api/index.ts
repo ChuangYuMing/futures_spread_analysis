@@ -9,8 +9,10 @@ const WeightedIndexParamsDefault: Pick<WeightedIndexParams, 'response'> = {
   response: 'json'
 }
 
+export type WeightedIndexResElement = [string, string, string, string, string]
+export type WeightedIndexRes = WeightedIndexResElement[]
 interface WeightedIndexResponse {
-  data: Array<string>
+  data: WeightedIndexRes
   stat: string
 }
 

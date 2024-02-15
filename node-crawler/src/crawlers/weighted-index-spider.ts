@@ -3,9 +3,15 @@
 
 import axios from 'axios'
 import { format, addMonths, setDate } from 'date-fns'
-import { delay } from '../utils/index.ts'
-import Api, { WeightedIndexParams } from '../api/index.ts'
+import { delay, formatStringNumber, isSettle } from '../utils/index.ts'
+import Api, {
+  WeightedIndexParams,
+  WeightedIndexResElement,
+  WeightedIndexRes
+} from '../api/index.ts'
+import Storage from '../storage/index.ts'
 
+const name = 'weighted_index'
 const args: string[] = process.argv.slice(2)
 
 let startDate: Date = args[0]
@@ -15,6 +21,44 @@ let startDate: Date = args[0]
 const endDate: Date = args[1]
   ? setDate(new Date(args[1]), 1)
   : setDate(new Date(), 1)
+
+const dataStorage = new Storage(name)
+console.log(dataStorage)
+
+interface DataValue {
+  open: number
+  high: number
+  low: number
+  w_index: number
+  is_settle: boolean
+}
+
+const data: { [date: string]: DataValue } = {}
+
+// 民國轉西元
+function formatAdDate(date: string) {
+  const dateArr = date.split('/')
+  const year = dateArr[0]
+  const month = dateArr[1]
+  const day = dateArr[2]
+  const adYear = String(parseInt(year) + 1911)
+  return adYear + '/' + month + '/' + day
+}
+
+function handleResponse(res: WeightedIndexRes) {
+  res.forEach((item: WeightedIndexResElement) => {
+    const [date, open, high, low, w_index] = item
+    const adDate = formatAdDate(date)
+
+    data[adDate] = {
+      open: formatStringNumber(open),
+      high: formatStringNumber(high),
+      low: formatStringNumber(low),
+      w_index: formatStringNumber(w_index),
+      is_settle: isSettle(adDate, '/')
+    }
+  })
+}
 
 async function main() {
   while (startDate <= endDate) {
@@ -32,6 +76,8 @@ async function main() {
       if (stat !== 'OK' || !data) {
         break
       }
+
+      handleResponse(res)
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error(error)

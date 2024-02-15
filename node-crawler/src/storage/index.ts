@@ -12,7 +12,7 @@ type DataItem = {
 
 type Data = DataItem[]
 
-class GCSStorage {
+class GCStorage {
   private folderName: string
   private storage: Storage
   private bucket: Bucket
@@ -50,4 +50,4 @@ class GCSStorage {
   }
 }
 
-export default GCSStorage
+export default GCStorage
