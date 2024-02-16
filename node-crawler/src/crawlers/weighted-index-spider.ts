@@ -23,7 +23,6 @@ const endDate: Date = args[1]
   : setDate(new Date(), 1)
 
 const dataStorage = new Storage(name)
-console.log(dataStorage)
 
 interface DataValue {
   open: number
@@ -33,7 +32,9 @@ interface DataValue {
   is_settle: boolean
 }
 
-const data: { [date: string]: DataValue } = {}
+export type YearData = { [date: string]: DataValue }
+
+const data: { [year: string]: YearData } = {}
 
 // 民國轉西元
 function formatAdDate(date: string) {
@@ -49,8 +50,10 @@ function handleResponse(res: WeightedIndexRes) {
   res.forEach((item: WeightedIndexResElement) => {
     const [date, open, high, low, w_index] = item
     const adDate = formatAdDate(date)
+    const year = adDate.split('/')[0]
 
-    data[adDate] = {
+    data[year] = data[year] || {}
+    data[year][adDate] = {
       open: formatStringNumber(open),
       high: formatStringNumber(high),
       low: formatStringNumber(low),
@@ -60,8 +63,25 @@ function handleResponse(res: WeightedIndexRes) {
   })
 }
 
+async function saveData() {
+  for (const year in data) {
+    const fileName = year
+    const yearData = data[year]
+    let oldData
+    try {
+      oldData = await dataStorage.getOldData<YearData>(fileName)
+    } catch (error) {
+      oldData = {}
+    }
+    const newData = { ...oldData, ...yearData }
+    await dataStorage.saveData<YearData>(fileName, newData)
+  }
+}
+
 async function main() {
+  console.log(`start - ${name}`)
   while (startDate <= endDate) {
+    console.log(`fetching - ${format(startDate, 'yyyyMM01')}`)
     try {
       await delay(2000)
       const params: WeightedIndexParams = {
@@ -71,7 +91,6 @@ async function main() {
 
       const { data } = await Api.getWeightedIndex(params)
       const { stat, data: res } = data
-      console.log(stat, res)
 
       if (stat !== 'OK' || !data) {
         break
@@ -84,6 +103,12 @@ async function main() {
       }
     }
     startDate = addMonths(startDate, 1)
+  }
+
+  try {
+    await saveData()
+  } catch (error) {
+    console.error(error)
   }
 
   return Promise.resolve()

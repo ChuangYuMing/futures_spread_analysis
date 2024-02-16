@@ -1,16 +1,7 @@
 import { Storage, Bucket, File } from '@google-cloud/storage'
-import fs from 'fs'
-import zlib from 'zlib'
 import { promisify } from 'util'
-import stream from 'stream'
+import stream, { Readable } from 'stream'
 const pipeline = promisify(stream.pipeline)
-
-type DataItem = {
-  name: string
-  value: number
-}
-
-type Data = DataItem[]
 
 class GCStorage {
   private folderName: string
@@ -23,24 +14,22 @@ class GCStorage {
     this.bucket = this.storage.bucket('jamie_stock')
   }
 
-  async getOldData(fileName: string): Promise<Data> {
+  async getOldData<T>(fileName: string): Promise<T> {
     const file: File = this.bucket.file(`${this.folderName}/${fileName}.json`)
     const [data]: [Buffer] = await file.download()
-    return JSON.parse(data.toString('utf-8')) as Data
+    return JSON.parse(data.toString('utf-8')) as T
   }
 
-  async saveData(fileName: string, data: Data): Promise<void> {
+  async saveData<T>(fileName: string, data: T): Promise<void> {
     const file: File = this.bucket.file(`${this.folderName}/${fileName}.json`)
     const jsonStr: string = JSON.stringify(data, null, 2)
-    const gzip = zlib.createGzip()
     const source = Buffer.from(jsonStr, 'utf-8')
 
     await pipeline(
-      fs.createReadStream(source),
-      gzip,
+      Readable.from(source),
       file.createWriteStream({
         resumable: false,
-        gzip: true,
+        gzip: false,
         metadata: {
           cacheControl: 'no-cache',
           contentType: 'application/json; charset=UTF-8'

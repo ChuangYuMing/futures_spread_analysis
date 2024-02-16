@@ -4,6 +4,7 @@ export function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+// 17,871.27 -> 17871.27
 export function formatStringNumber(str: string): number {
   return parseFloat(str.replace(/,/g, ''))
 }
@@ -31,6 +32,8 @@ function getDateObj(date: string, token: string | null): DateObj {
 }
 
 // 是否為結算日
+// 每個月的第三個週三是該月合約的最後交易日，也是台指期結算日。 如果這一天是法定假日，則向後順延到下一個開市日。
+// 目前計算可能有誤差，因為假日的判斷不夠完整
 export function isSettle(date: string, token: string) {
   const dateObj = getDateObj(date, token)
   const year = dateObj['year']
