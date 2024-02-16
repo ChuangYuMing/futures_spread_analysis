@@ -1,20 +1,9 @@
 import { ApiInstance } from './instance.ts'
-
-export interface WeightedIndexParams {
-  response: string
-  date: string
-}
-
-const WeightedIndexParamsDefault: Pick<WeightedIndexParams, 'response'> = {
-  response: 'json'
-}
-
-export type WeightedIndexResElement = [string, string, string, string, string]
-export type WeightedIndexRes = WeightedIndexResElement[]
-interface WeightedIndexResponse {
-  data: WeightedIndexRes
-  stat: string
-}
+import {
+  WeightedIndexParams,
+  WeightedIndexParamsDefault,
+  WeightedIndexResponse
+} from '../crawlers/weighted-index-spider-types.ts'
 
 export default {
   getWeightedIndex(params: WeightedIndexParams) {

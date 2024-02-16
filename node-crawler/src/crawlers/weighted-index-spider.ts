@@ -4,11 +4,13 @@
 import axios from 'axios'
 import { format, addMonths, setDate } from 'date-fns'
 import { delay, formatStringNumber, isSettle } from '../utils/index.ts'
-import Api, {
+import Api from '../api/index.ts'
+import {
+  YearData,
   WeightedIndexParams,
   WeightedIndexResElement,
   WeightedIndexRes
-} from '../api/index.ts'
+} from './weighted-index-spider-types.ts'
 import Storage from '../storage/index.ts'
 
 const name = 'weighted_index'
@@ -23,16 +25,6 @@ const endDate: Date = args[1]
   : setDate(new Date(), 1)
 
 const dataStorage = new Storage(name)
-
-interface DataValue {
-  open: number
-  high: number
-  low: number
-  w_index: number
-  is_settle: boolean
-}
-
-export type YearData = { [date: string]: DataValue }
 
 const data: { [year: string]: YearData } = {}
 
