@@ -1,7 +1,6 @@
 import { Storage, Bucket, File } from '@google-cloud/storage'
-import { promisify } from 'util'
-import stream, { Readable } from 'stream'
-const pipeline = promisify(stream.pipeline)
+import { Readable } from 'stream'
+import { pipeline } from 'stream/promises'
 
 class GCStorage {
   private folderName: string
