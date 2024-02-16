@@ -1,4 +1,4 @@
-export interface DataValue {
+export type DataValue = {
   open: number
   high: number
   low: number
@@ -8,7 +8,7 @@ export interface DataValue {
 
 export type YearData = { [date: string]: DataValue }
 
-export interface WeightedIndexParams {
+export type WeightedIndexParams = {
   response: string
   date: string
 }
@@ -20,7 +20,7 @@ export const WeightedIndexParamsDefault: Pick<WeightedIndexParams, 'response'> =
 
 export type WeightedIndexResElement = [string, string, string, string, string]
 export type WeightedIndexRes = WeightedIndexResElement[]
-export interface WeightedIndexResponse {
+export type WeightedIndexResponse = {
   data: WeightedIndexRes
   stat: string
 }
