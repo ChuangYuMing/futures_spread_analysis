@@ -4,6 +4,10 @@ import {
   WeightedIndexParamsDefault,
   WeightedIndexResponse
 } from '../crawlers/weighted-index-spider-types.ts'
+import {
+  TxOpenInterestParams,
+  TxOpenInterestResponse
+} from '../crawlers/tx-open-interest-spider-types.ts'
 
 export default {
   getWeightedIndex(params: WeightedIndexParams) {
@@ -13,6 +17,13 @@ export default {
         ...WeightedIndexParamsDefault,
         ...params
       }
+    })
+  },
+
+  getTxOpenInterest(params: TxOpenInterestParams) {
+    const url = 'https://www.taifex.com.tw/cht/3/largeTraderFutQry'
+    return ApiInstance.get<TxOpenInterestResponse>(url, {
+      params
     })
   }
 }
