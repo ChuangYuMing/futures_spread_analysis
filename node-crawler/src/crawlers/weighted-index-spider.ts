@@ -1,7 +1,6 @@
 // 加權指數
 // https://www.twse.com.tw/zh/page/trading/indices/MI_5MINS_HIST.html
 
-import axios from 'axios'
 import { format, addMonths, setDate } from 'date-fns'
 import { delay, formatStringNumber, isSettle } from '../utils/index.ts'
 import Api from '../api/index.ts'
@@ -12,6 +11,7 @@ import {
   WeightedIndexRes
 } from './weighted-index-spider-types.ts'
 import Storage from '../storage/index.ts'
+import { saveData, SaveDataType } from '../utils/store.ts'
 
 const name = 'weighted_index'
 const args: string[] = process.argv.slice(2)
@@ -26,7 +26,7 @@ const endDate: Date = args[1]
 
 const dataStorage = new Storage(name)
 
-const data: { [year: string]: YearData } = {}
+const data: SaveDataType<YearData> = {}
 
 // 民國轉西元
 function formatAdDate(date: string) {
@@ -55,19 +55,8 @@ function handleResponse(res: WeightedIndexRes) {
   })
 }
 
-async function saveData() {
-  for (const year in data) {
-    const fileName = year
-    const yearData = data[year]
-    let oldData
-    try {
-      oldData = await dataStorage.getOldData<YearData>(fileName)
-    } catch (error) {
-      oldData = {}
-    }
-    const newData = { ...oldData, ...yearData }
-    await dataStorage.saveData<YearData>(fileName, newData)
-  }
+async function save() {
+  await saveData<YearData>(data, dataStorage)
 }
 
 async function main() {
@@ -90,15 +79,14 @@ async function main() {
 
       handleResponse(res)
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error(error)
-      }
+      console.error(error)
+      break
     }
     startDate = addMonths(startDate, 1)
   }
 
   try {
-    await saveData()
+    await save()
   } catch (error) {
     console.error(error)
   }

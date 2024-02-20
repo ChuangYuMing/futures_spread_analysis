@@ -2,14 +2,15 @@
 // https://www.taifex.com.tw/cht/3/largeTraderFutQry
 
 import * as cheerio from 'cheerio'
-import axios from 'axios'
 import { format, addDays } from 'date-fns'
 import { delay, formatStringNumber, isSettle } from '../utils/index.ts'
+import { saveData, SaveDataType } from '../utils/store.ts'
 import {
   TxOpenInterestParams,
   YearData
 } from './tx-open-interest-spider-types.ts'
 import Api from '../api/index.ts'
+import Storage from '../storage/index.ts'
 
 const name = 'tx_open_interest'
 const args: string[] = process.argv.slice(2)
@@ -17,7 +18,9 @@ const args: string[] = process.argv.slice(2)
 let startDate: Date = args[0] ? new Date(args[0]) : new Date()
 const endDate: Date = args[1] ? new Date(args[1]) : new Date()
 
-const data: { [year: string]: YearData } = {}
+const dataStorage = new Storage(name)
+
+const data: SaveDataType<YearData> = {}
 
 function parse(queryDate: string, htmlString: string) {
   const $ = cheerio.load(htmlString)
@@ -50,12 +53,14 @@ function parse(queryDate: string, htmlString: string) {
       total: formatStringNumber(total), // 市場未平倉
       is_settle: isSettle(queryDate, '/')
     }
-
-    console.log(data)
   } catch (e) {
     console.log('error - %s', name)
     console.error(e)
   }
+}
+
+async function save() {
+  await saveData<YearData>(data, dataStorage)
 }
 
 async function main() {
@@ -77,12 +82,17 @@ async function main() {
       const { data: htmlText } = await Api.getTxOpenInterest(params)
       parse(queryDate, htmlText)
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error(error)
-      }
+      console.error(error)
+      break
     }
 
     startDate = addDays(startDate, 1)
+  }
+
+  try {
+    await save()
+  } catch (error) {
+    console.error(error)
   }
 }
 
