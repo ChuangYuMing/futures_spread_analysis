@@ -8,6 +8,10 @@ import {
   TxOpenInterestParams,
   TxOpenInterestResponse
 } from '../crawlers/tx-open-interest-spider-types.ts'
+import {
+  ThreeOptionOpiParams,
+  ThreeOptionOpiResponse
+} from '../crawlers/three-corporate-option-opi-spider-types.ts'
 
 export default {
   getWeightedIndex(params: WeightedIndexParams) {
@@ -23,6 +27,13 @@ export default {
   getTxOpenInterest(params: TxOpenInterestParams) {
     const url = 'https://www.taifex.com.tw/cht/3/largeTraderFutQry'
     return ApiInstance.get<TxOpenInterestResponse>(url, {
+      params
+    })
+  },
+
+  getThreeOptionOpi(params: ThreeOptionOpiParams) {
+    const url = 'https://www.taifex.com.tw/cht/3/callsAndPutsDate'
+    return ApiInstance.get<ThreeOptionOpiResponse>(url, {
       params
     })
   }
