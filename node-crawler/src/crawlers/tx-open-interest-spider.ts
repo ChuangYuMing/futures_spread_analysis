@@ -4,10 +4,11 @@
 import * as cheerio from 'cheerio'
 import { format, addDays } from 'date-fns'
 import { delay, formatStringNumber, isSettle } from '../utils/index.ts'
-import { saveData, SaveDataType } from '../utils/store.ts'
+import { saveData, RecordYear } from '../utils/store.ts'
 import {
   TxOpenInterestParams,
-  YearData
+  YearData,
+  DataValue
 } from './tx-open-interest-spider-types.ts'
 import Api from '../api/index.ts'
 import Storage from '../storage/index.ts'
@@ -20,7 +21,7 @@ const endDate: Date = args[1] ? new Date(args[1]) : new Date()
 
 const dataStorage = new Storage(name)
 
-const data: SaveDataType<YearData> = {}
+const data: RecordYear<YearData> = {}
 
 function parse(queryDate: string, htmlString: string) {
   const $ = cheerio.load(htmlString)
@@ -60,7 +61,7 @@ function parse(queryDate: string, htmlString: string) {
 }
 
 async function save() {
-  await saveData<YearData>(data, dataStorage)
+  await saveData<DataValue>(data, dataStorage)
 }
 
 async function main() {

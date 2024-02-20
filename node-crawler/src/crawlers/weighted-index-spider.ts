@@ -6,12 +6,13 @@ import { delay, formatStringNumber, isSettle } from '../utils/index.ts'
 import Api from '../api/index.ts'
 import {
   YearData,
+  DataValue,
   WeightedIndexParams,
   WeightedIndexResElement,
   WeightedIndexRes
 } from './weighted-index-spider-types.ts'
 import Storage from '../storage/index.ts'
-import { saveData, SaveDataType } from '../utils/store.ts'
+import { saveData, RecordYear } from '../utils/store.ts'
 
 const name = 'weighted_index'
 const args: string[] = process.argv.slice(2)
@@ -26,7 +27,7 @@ const endDate: Date = args[1]
 
 const dataStorage = new Storage(name)
 
-const data: SaveDataType<YearData> = {}
+const data: RecordYear<YearData> = {}
 
 // 民國轉西元
 function formatAdDate(date: string) {
@@ -56,7 +57,7 @@ function handleResponse(res: WeightedIndexRes) {
 }
 
 async function save() {
-  await saveData<YearData>(data, dataStorage)
+  await saveData<DataValue>(data, dataStorage)
 }
 
 async function main() {
