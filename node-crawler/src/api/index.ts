@@ -47,5 +47,10 @@ export default {
     return ApiInstance.get<ThreeOpenInterestResponse>(url, {
       params
     })
+  },
+
+  getStockFuturesList() {
+    const url = 'https://www.taifex.com.tw/cht/2/stockLists'
+    return ApiInstance.get<string>(url)
   }
 }
